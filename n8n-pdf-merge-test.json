@@ -1,0 +1,101 @@
+{
+  "name": "PDF Merge - Simple File Based",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Just pass the file paths\nreturn [{\n  json: {\n    file1: '/data/first.pdf',\n    file2: '/data/second.pdf',\n    output: '/tmp/merged_' + new Date().getTime() + '.pdf'\n  }\n}];"
+      },
+      "id": "2",
+      "name": "Set File Paths",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "command": "=curl -X POST \"http://172.18.0.1:8080/api/v1/general/merge-pdfs\" -H \"X-API-KEY: f80ffde6-43b5-4e73-9f25-5738b06ff72d\" -F \"fileInput=@{{ $json.file1 }}\" -F \"fileInput=@{{ $json.file2 }}\" -o {{ $json.output }} && echo {{ $json.output }}"
+      },
+      "id": "3",
+      "name": "Merge PDFs",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "filePath": "={{ $json.stdout.trim() }}",
+        "dataPropertyName": "data"
+      },
+      "id": "4",
+      "name": "Read Merged PDF",
+      "type": "n8n-nodes-base.readBinaryFile",
+      "typeVersion": 1,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "fileName": "=/tmp/final_merged_{{$now.format('yyyy-MM-dd_HH-mm-ss')}}.pdf",
+        "dataPropertyName": "data"
+      },
+      "id": "5",
+      "name": "Write Output",
+      "type": "n8n-nodes-base.writeBinaryFile",
+      "typeVersion": 1,
+      "position": [1050, 300]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set File Paths",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set File Paths": {
+      "main": [
+        [
+          {
+            "node": "Merge PDFs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge PDFs": {
+      "main": [
+        [
+          {
+            "node": "Read Merged PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Merged PDF": {
+      "main": [
+        [
+          {
+            "node": "Write Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
