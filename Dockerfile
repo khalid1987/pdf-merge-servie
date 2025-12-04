@@ -8,4 +8,4 @@ COPY pdf_merge_service.py .
 
 EXPOSE 8080
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "2", "--timeout", "120", "pdf_merge_service:app"]
+CMD gunicorn --bind 0.0.0.0:${PORT:-8080} --workers 2 --timeout 120 pdf_merge_service:app
