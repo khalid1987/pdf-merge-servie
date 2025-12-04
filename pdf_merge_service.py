@@ -30,7 +30,7 @@ def merge_pdfs():
             output,
             mimetype='application/pdf',
             as_attachment=True,
-            download_name='merged.pdf'
+            download_filename='merged.pdf'
         )
     except Exception as e:
         return {'error': str(e)}, 500
