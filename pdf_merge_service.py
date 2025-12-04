@@ -6,6 +6,11 @@ import os
 
 app = Flask(__name__)
 
+@app.route('/', methods=['GET'])
+def health_check():
+    """Health check endpoint"""
+    return {'status': 'ok', 'service': 'PDF Merge Service', 'endpoints': ['/merge']}, 200
+
 @app.route('/merge', methods=['POST'])
 def merge_pdfs():
     """Merge multiple PDF files sent as multipart/form-data"""
