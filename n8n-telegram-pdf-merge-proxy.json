@@ -1,0 +1,354 @@
+{
+  "name": "Telegram PDF Merge Bot (with Proxy)",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ]
+      },
+      "id": "telegram-trigger",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 400],
+      "webhookId": "telegram-pdf-merge-proxy",
+      "credentials": {
+        "telegramApi": {
+          "id": "khalids_telegram_bot",
+          "name": "khalids_telegram_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "1",
+              "leftValue": "={{ $json.message.text }}",
+              "rightValue": "/start",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "is-start-command",
+      "name": "Is /start?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [460, 400]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.chat.id }}",
+        "text": "👋 Welcome to PDF Merge Bot!\n\n📖 How to use:\n1. Send me 2 PDF files (as documents)\n2. I'll merge them and send back!\n\nSend /help for more info.",
+        "additionalFields": {}
+      },
+      "id": "send-welcome",
+      "name": "Send Welcome",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [680, 280],
+      "credentials": {
+        "telegramApi": {
+          "id": "khalids_telegram_bot",
+          "name": "khalids_telegram_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "1",
+              "leftValue": "={{ $json.message.document }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "has-document",
+      "name": "Has PDF?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [680, 400]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.chat.id }}",
+        "text": "❌ Please send PDFs as documents, not text.\n\nUse /start to begin.",
+        "additionalFields": {}
+      },
+      "id": "send-error",
+      "name": "Send Error",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [680, 520],
+      "credentials": {
+        "telegramApi": {
+          "id": "khalids_telegram_bot",
+          "name": "khalids_telegram_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.chat.id }}",
+        "text": "=✅ PDF received: {{ $json.message.document.file_name }}\n\n⏳ Processing...",
+        "additionalFields": {}
+      },
+      "id": "ack-pdf",
+      "name": "Acknowledge PDF",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [900, 400],
+      "credentials": {
+        "telegramApi": {
+          "id": "khalids_telegram_bot",
+          "name": "khalids_telegram_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Check if binary data exists and rename it\nconst item = $input.item;\n\n// Telegram Trigger should have binary data attached\nif (!item.binary || !item.binary.data) {\n  throw new Error('No binary data found. Make sure Telegram Trigger has \"Download Attachments\" enabled.');\n}\n\n// Create new binary object with timestamp-based name\nconst timestamp = Date.now();\nconst newBinaryName = 'pdf' + timestamp;\n\nreturn {\n  json: item.json,\n  binary: {\n    [newBinaryName]: item.binary.data\n  }\n};"
+      },
+      "id": "rename-binary",
+      "name": "Rename Binary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 400]
+    },
+    {
+      "parameters": {
+        "amount": 2,
+        "options": {}
+      },
+      "id": "wait-for-2",
+      "name": "Wait for 2 PDFs",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [1340, 400]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.chat.id }}",
+        "text": "⏳ Got both PDFs! Merging now...",
+        "additionalFields": {}
+      },
+      "id": "notify-merging",
+      "name": "Notify Merging",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1460, 300],
+      "credentials": {
+        "telegramApi": {
+          "id": "khalids_telegram_bot",
+          "name": "khalids_telegram_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Prepare data for proxy service\nconst items = $input.all();\n\nif (items.length < 2) {\n  throw new Error('Need 2 PDFs to merge');\n}\n\n// Get binary property names (they have timestamps)\nconst binaryKeys1 = Object.keys(items[0].binary);\nconst binaryKeys2 = Object.keys(items[1].binary);\n\nconst files = [\n  {\n    data: items[0].binary[binaryKeys1[0]].data,\n    filename: items[0].json.message.document.file_name || 'file1.pdf'\n  },\n  {\n    data: items[1].binary[binaryKeys2[0]].data,\n    filename: items[1].json.message.document.file_name || 'file2.pdf'\n  }\n];\n\nreturn {\n  json: {\n    files: files,\n    chat_id: items[0].json.message.chat.id\n  }\n};"
+      },
+      "id": "prepare-for-proxy",
+      "name": "Prepare for Proxy",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1560, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://95.216.205.234:3000/merge",
+        "sendBody": true,
+        "contentType": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "call-proxy",
+      "name": "Call Merge Proxy",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1780, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Convert base64 response back to binary\nconst response = $input.item.json;\n\nif (!response.success) {\n  throw new Error(`Merge failed: ${response.error}`);\n}\n\nreturn {\n  json: {\n    chat_id: $input.item.json.chat_id,\n    success: true,\n    filename: response.filename\n  },\n  binary: {\n    data: {\n      data: response.data,\n      mimeType: response.mimeType,\n      fileName: response.filename\n    }\n  }\n};"
+      },
+      "id": "convert-to-binary",
+      "name": "Convert to Binary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2000, 400]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "✅ Here's your merged PDF!",
+        "additionalFields": {
+          "appendAttribution": false,
+          "file": "data"
+        }
+      },
+      "id": "send-merged-pdf",
+      "name": "Send Merged PDF",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [2220, 400],
+      "credentials": {
+        "telegramApi": {
+          "id": "khalids_telegram_bot",
+          "name": "khalids_telegram_bot"
+        }
+      }
+    },
+
+    {
+      "parameters": {
+        "content": "## Telegram PDF Merge Bot with Proxy\n\n### Flow:\n1. User sends PDF 1 → Bot acknowledges\n2. User sends PDF 2 → Bot starts merging\n3. Aggregate node waits for 2 files\n4. Both PDFs downloaded from Telegram\n5. Converted to base64 and sent to proxy\n6. Proxy merges via Stirling PDF\n7. Merged PDF sent back to user\n\n### Setup:\n1. Replace khalids_telegram_bot (appears multiple times)\n2. Ensure proxy running: http://95.216.205.234:3000\n3. Activate workflow\n4. Send 2 PDFs to your bot\n\n### Note:\nNo static data needed - uses Aggregate node to wait for 2 files!",
+        "height": 440,
+        "width": 420
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [240, 80],
+      "id": "note1",
+      "name": "Instructions"
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [[
+        {
+          "node": "Is /start?",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Is /start?": {
+      "main": [
+        [{
+          "node": "Send Welcome",
+          "type": "main",
+          "index": 0
+        }],
+        [{
+          "node": "Has PDF?",
+          "type": "main",
+          "index": 0
+        }]
+      ]
+    },
+    "Has PDF?": {
+      "main": [
+        [{
+          "node": "Acknowledge PDF",
+          "type": "main",
+          "index": 0
+        }],
+        [{
+          "node": "Send Error",
+          "type": "main",
+          "index": 0
+        }]
+      ]
+    },
+    "Acknowledge PDF": {
+      "main": [[
+        {
+          "node": "Rename Binary",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Rename Binary": {
+      "main": [[
+        {
+          "node": "Wait for 2 PDFs",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Wait for 2 PDFs": {
+      "main": [[
+        {
+          "node": "Notify Merging",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Notify Merging": {
+      "main": [[
+        {
+          "node": "Prepare for Proxy",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Prepare for Proxy": {
+      "main": [[
+        {
+          "node": "Call Merge Proxy",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Call Merge Proxy": {
+      "main": [[
+        {
+          "node": "Convert to Binary",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Convert to Binary": {
+      "main": [[
+        {
+          "node": "Send Merged PDF",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Send Merged PDF": {
+      "main": [[]]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
