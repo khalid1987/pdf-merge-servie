@@ -1,0 +1,280 @@
+{
+  "name": "Test PDF Merge - Manual Upload",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Manual PDF Merge Test\n\n**Steps:**\n1. Edit 'Upload Invoice' - change URL to your invoice PDF URL\n2. Edit 'Upload Supplement' - change URL to your supplement PDF URL\n3. Click 'Test workflow'\n4. Download merged PDF from the last node\n\n**Test URLs:**\n- https://ontheline.trincoll.edu/images/bookdown/sample-local-pdf.pdf\n- Or upload PDFs to a URL you control\n\n**This simulates:**\nYour main workflow's `extract_binary_files` output",
+        "height": 380,
+        "width": 420,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [240, 20],
+      "id": "instructions",
+      "name": "Instructions"
+    },
+    {
+      "parameters": {},
+      "id": "manual",
+      "name": "When clicking 'Test workflow'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 450]
+    },
+    {
+      "parameters": {
+        "url": "https://ontheline.trincoll.edu/images/bookdown/sample-local-pdf.pdf",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "read-invoice",
+      "name": "Upload Invoice",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 360]
+    },
+    {
+      "parameters": {
+        "url": "https://ontheline.trincoll.edu/images/bookdown/sample-local-pdf.pdf",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "read-supplement",
+      "name": "Upload Supplement",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 540]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Rename 'data' to 'invoice'\nconst item = $input.item;\nreturn {\n  json: {\n    invoice_name: 'invoice.pdf'\n  },\n  binary: {\n    invoice: item.binary.data\n  }\n};"
+      },
+      "id": "rename-invoice",
+      "name": "Rename to invoice",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 360]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "mergeByPosition",
+        "options": {}
+      },
+      "id": "merge",
+      "name": "Combine Both",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [900, 450]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "invoice_binary_found",
+              "name": "invoice_binary_found",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "supplement_binary_found",
+              "name": "supplement_binary_found",
+              "value": true,
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "set-metadata",
+      "name": "Set Test Metadata",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1120, 450]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.invoice_binary_found }}",
+              "value2": true
+            },
+            {
+              "value1": "={{ $json.supplement_binary_found }}",
+              "value2": true
+            }
+          ]
+        },
+        "combineOperation": "all"
+      },
+      "id": "check-both-exist",
+      "name": "Both PDFs Exist?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1340, 450]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Simulates extract_binary_files output\nconst item = $input.item;\n\nconst files = [\n  {\n    data: item.binary.invoice.data,\n    filename: 'invoice.pdf'\n  },\n  {\n    data: item.binary.supplement.data,\n    filename: 'supplement.pdf'\n  }\n];\n\nconsole.log(`Prepared ${files.length} files for merge`);\n\nreturn {\n  json: {\n    files: files\n  }\n};"
+      },
+      "id": "prepare",
+      "name": "Prepare for Proxy",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1560, 350]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://95.216.205.234:3000/merge",
+        "sendBody": true,
+        "contentType": "json",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "files",
+              "value": "={{ $json.files }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "call-proxy",
+      "name": "Call Merge Proxy",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1780, 350]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Convert response back to binary\nconst response = $input.item.json;\n\nif (!response.success) {\n  throw new Error(`Merge failed: ${response.error}`);\n}\n\nreturn {\n  json: {\n    success: response.success,\n    filename: response.filename,\n    size: response.size\n  },\n  binary: {\n    data: {\n      data: response.data,\n      mimeType: response.mimeType,\n      fileName: response.filename\n    }\n  }\n};"
+      },
+      "id": "convert-back",
+      "name": "Convert to Binary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2000, 350]
+    },
+    {
+      "parameters": {
+        "content": "## No Merge Needed\n\nOnly one PDF exists, skipping merge.\n\nThe workflow would continue with just the invoice PDF.",
+        "height": 200,
+        "width": 300,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [1560, 530],
+      "id": "no-merge-note",
+      "name": "No Merge Note"
+    }
+  ],
+  "connections": {
+    "When clicking 'Test workflow'": {
+      "main": [[
+        {
+          "node": "Upload Invoice",
+          "type": "main",
+          "index": 0
+        },
+        {
+          "node": "Upload Supplement",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Upload Invoice": {
+      "main": [[
+        {
+          "node": "Rename to invoice",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Upload Supplement": {
+      "main": [[
+        {
+          "node": "Combine Both",
+          "type": "main",
+          "index": 1
+        }
+      ]]
+    },
+    "Rename to invoice": {
+      "main": [[
+        {
+          "node": "Combine Both",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Combine Both": {
+      "main": [[
+        {
+          "node": "Set Test Metadata",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Set Test Metadata": {
+      "main": [[
+        {
+          "node": "Both PDFs Exist?",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Both PDFs Exist?": {
+      "main": [
+        [
+          {
+            "node": "Prepare for Proxy",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Prepare for Proxy": {
+      "main": [[
+        {
+          "node": "Call Merge Proxy",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Call Merge Proxy": {
+      "main": [[
+        {
+          "node": "Convert to Binary",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

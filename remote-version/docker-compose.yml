@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  stirling-pdf:
+    image: frooodle/s-pdf:latest
+    container_name: stirling-pdf-remote
+    ports:
+      - "8080:8080"
+    environment:
+      - DOCKER_ENABLE_SECURITY=true
+      - SECURITY_ENABLE_LOGIN=false
+    volumes:
+      - stirling-data:/usr/share/tessdata
+      - stirling-config:/configs
+    restart: unless-stopped
+
+volumes:
+  stirling-data:
+  stirling-config:

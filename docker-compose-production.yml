@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  # Stirling PDF - Enterprise PDF manipulation service
+  stirling-pdf:
+    image: frooodle/s-pdf:latest
+    container_name: stirling-pdf
+    ports:
+      - "8080:8080"
+    volumes:
+      # Persistent storage for OCR data and configurations
+      - stirling_data:/usr/share/tessdata
+      - stirling_configs:/configs
+    environment:
+      # Security Settings
+      - DOCKER_ENABLE_SECURITY=false  # Change to true for production with authentication
+      - SECURITY_ENABLE_LOGIN=false   # Change to true to require login
+      
+      # Feature Toggles (disable unused features to save resources)
+      - INSTALL_BOOK_AND_ADVANCED_HTML_OPS=false
+      
+      # Localization
+      - LANGS=de_DE,en_US
+      
+      # Performance Tuning
+      - JAVA_TOOL_OPTIONS=-Xmx1024m  # Limit Java heap to 1GB (adjust based on VPS RAM)
+    restart: unless-stopped
+    networks:
+      - pdf_network
+    deploy:
+      resources:
+        limits:
+          memory: 2G  # Prevent runaway memory usage
+        reservations:
+          memory: 512M  # Minimum guaranteed memory
+
+  # PDF Merge Proxy - n8n to Stirling PDF bridge
+  pdf-merge-proxy:
+    build: ./pdf-proxy
+    container_name: pdf-merge-proxy
+    ports:
+      - "3000:3000"
+    environment:
+      # Service Configuration
+      - NODE_ENV=production
+      - STIRLING_PDF_URL=http://stirling-pdf:8080  # Internal Docker network URL
+      - PORT=3000
+      
+      # Logging
+      - LOG_LEVEL=info  # Options: debug, info, warn, error
+    depends_on:
+      - stirling-pdf
+    restart: unless-stopped
+    networks:
+      - pdf_network
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 128M
+
+  # Optional: Test Web UI for manual PDF merge testing
+  # Uncomment to deploy
+  # pdf-test-ui:
+  #   image: nginx:alpine
+  #   container_name: pdf-test-ui
+  #   ports:
+  #     - "8081:80"
+  #   volumes:
+  #     - ./test-ui/index.html:/usr/share/nginx/html/index.html:ro
+  #   restart: unless-stopped
+  #   networks:
+  #     - pdf_network
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         memory: 64M
+
+# Persistent Storage
+volumes:
+  stirling_data:
+    driver: local
+  stirling_configs:
+    driver: local
+
+# Isolated Network for Services
+networks:
+  pdf_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
+

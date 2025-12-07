@@ -1,0 +1,224 @@
+{
+  "name": "Test PDF Merge - Standalone",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "When clicking 'Test workflow'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://ontheline.trincoll.edu/images/bookdown/sample-local-pdf.pdf",
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "read-pdf1",
+      "name": "Download Test PDF 1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 240]
+    },
+    {
+      "parameters": {
+        "url": "https://ontheline.trincoll.edu/images/bookdown/sample-local-pdf.pdf",
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "data2"
+            }
+          }
+        }
+      },
+      "id": "read-pdf2",
+      "name": "Download Test PDF 2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 360]
+    },
+    {
+      "parameters": {
+        "mode": "binaryToJson",
+        "options": {}
+      },
+      "id": "save-pdf1",
+      "name": "Save PDF 1 to JSON",
+      "type": "n8n-nodes-base.moveBinaryData",
+      "typeVersion": 1,
+      "position": [680, 240]
+    },
+    {
+      "parameters": {
+        "mode": "jsonToBinary",
+        "options": {
+          "mimeType": "application/pdf",
+          "fileName": "file1.pdf",
+          "dataIsBase64": true
+        }
+      },
+      "id": "restore-pdf1",
+      "name": "Restore as file1",
+      "type": "n8n-nodes-base.moveBinaryData",
+      "typeVersion": 1,
+      "position": [900, 240]
+    },
+    {
+      "parameters": {
+        "mode": "jsonToBinary",
+        "options": {
+          "mimeType": "application/pdf",
+          "fileName": "file2.pdf",
+          "dataIsBase64": true,
+          "destinationKey": "file2"
+        }
+      },
+      "id": "restore-pdf2",
+      "name": "Restore as file2",
+      "type": "n8n-nodes-base.moveBinaryData",
+      "typeVersion": 1,
+      "position": [900, 360]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "mergeByPosition",
+        "options": {}
+      },
+      "id": "merge-both",
+      "name": "Merge Both",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://95.216.205.234:8080/api/v1/general/merge-pdfs",
+        "authentication": "none",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "fileInput",
+              "value": "={{ $binary.file1 }}"
+            },
+            {
+              "name": "fileInput",
+              "value": "={{ $binary.file2 }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "call-stirling",
+      "name": "Call Stirling PDF Merge",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1340, 300]
+    },
+    {
+      "parameters": {
+        "content": "## Standalone PDF Merge Test\n\n1. Click 'Test workflow' button\n2. Downloads 2 PDFs\n3. Appends them into one list\n4. Sends all to Stirling PDF via HTTP Request (batching enabled)\n5. Returns merged PDF\n\nNo Code node - just HTTP Request with batching!",
+        "height": 280,
+        "width": 420,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [240, 20],
+      "id": "note",
+      "name": "Instructions"
+    }
+  ],
+  "connections": {
+    "When clicking 'Test workflow'": {
+      "main": [[
+        {
+          "node": "Download Test PDF 1",
+          "type": "main",
+          "index": 0
+        },
+        {
+          "node": "Download Test PDF 2",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Download Test PDF 1": {
+      "main": [[
+        {
+          "node": "Save PDF 1 to JSON",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Download Test PDF 2": {
+      "main": [[
+        {
+          "node": "Restore as file2",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Save PDF 1 to JSON": {
+      "main": [[
+        {
+          "node": "Restore as file1",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Restore as file1": {
+      "main": [[
+        {
+          "node": "Merge Both",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Restore as file2": {
+      "main": [[
+        {
+          "node": "Merge Both",
+          "type": "main",
+          "index": 1
+        }
+      ]]
+    },
+    "Merge Both": {
+      "main": [[
+        {
+          "node": "Call Stirling PDF Merge",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

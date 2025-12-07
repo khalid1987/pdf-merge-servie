@@ -1,0 +1,51 @@
+{
+  "name": "PDF Merge - Subworkflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "trigger",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// This code runs once and processes all input items\nconst items = $input.all();\n\nif (items.length < 2) {\n  throw new Error(`Need at least 2 PDF files to merge, got ${items.length}`);\n}\n\n// Prepare FormData\nconst FormData = require('form-data');\nconst formData = new FormData();\n\n// Add each PDF as fileInput\nfor (let i = 0; i < items.length; i++) {\n  if (!items[i].binary || !items[i].binary.data) {\n    throw new Error(`Item ${i} does not have binary data`);\n  }\n  \n  const binaryData = items[i].binary.data;\n  const buffer = Buffer.from(binaryData.data, 'base64');\n  const fileName = binaryData.fileName || `file${i+1}.pdf`;\n  formData.append('fileInput', buffer, fileName);\n}\n\n// Call Stirling PDF API\nconst response = await fetch('http://95.216.205.234:8080/api/v1/general/merge-pdfs', {\n  method: 'POST',\n  body: formData,\n  headers: formData.getHeaders()\n});\n\nif (!response.ok) {\n  const errorText = await response.text();\n  throw new Error(`Stirling PDF API error: ${response.status} ${response.statusText} - ${errorText}`);\n}\n\nconst mergedPdfBuffer = await response.arrayBuffer();\n\nreturn {\n  binary: {\n    data: {\n      data: Buffer.from(mergedPdfBuffer).toString('base64'),\n      mimeType: 'application/pdf',\n      fileName: 'merged.pdf'\n    }\n  }\n};"
+      },
+      "id": "merge-code",
+      "name": "Merge PDFs via Stirling",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "content": "## PDF Merge Subworkflow\n\nThis workflow can be called by other workflows using the Execute Workflow node.\n\nInput: Multiple items with binary PDF data\nOutput: Single merged PDF",
+        "height": 240,
+        "width": 380,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [240, 80],
+      "id": "note",
+      "name": "Info"
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [[
+        {
+          "node": "Merge PDFs via Stirling",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

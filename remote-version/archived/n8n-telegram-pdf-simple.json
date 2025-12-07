@@ -1,0 +1,192 @@
+{
+  "name": "Telegram PDF Merge Bot - Simple",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ]
+      },
+      "id": "telegram-trigger",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 300],
+      "webhookId": "telegram-pdf-merge-simple",
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_TELEGRAM_CREDENTIAL_ID",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.chat.id }}",
+        "text": "👋 Welcome to PDF Merge Bot!\n\n📖 How to use:\n1. Send me the FIRST PDF\n2. Send me the SECOND PDF\n3. I'll merge them and send back!\n\n⚠️ Send PDFs one by one, wait for confirmation between files.",
+        "additionalFields": {}
+      },
+      "id": "send-welcome",
+      "name": "Send Welcome",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [460, 200],
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_TELEGRAM_CREDENTIAL_ID",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "1",
+              "leftValue": "={{ $json.message.text }}",
+              "rightValue": "/start",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "is-start-command",
+      "name": "Is /start?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.chat.id }}",
+        "text": "📤 Please send me TWO PDF files (one at a time) to merge them.\n\n💡 Tip: Send as Documents, not as Photos!",
+        "additionalFields": {}
+      },
+      "id": "send-help",
+      "name": "Send Instructions",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [680, 400],
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_TELEGRAM_CREDENTIAL_ID",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "1",
+              "leftValue": "={{ $json.message.document }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "has-document",
+      "name": "Has PDF?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.chat.id }}",
+        "text": "✅ Got your PDF! Now send me the SECOND PDF to merge.",
+        "additionalFields": {}
+      },
+      "id": "ack-first-pdf",
+      "name": "Acknowledge First PDF",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [900, 300],
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_TELEGRAM_CREDENTIAL_ID",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Simple 2-PDF Merge\n\nThis version asks user to:\n1. Send PDF 1 → Bot confirms\n2. Send PDF 2 → Bot merges both\n\nNo queue needed!",
+        "height": 250,
+        "width": 300
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [240, 80],
+      "id": "note1",
+      "name": "Note"
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [[
+        {
+          "node": "Is /start?",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Is /start?": {
+      "main": [
+        [{
+          "node": "Send Welcome",
+          "type": "main",
+          "index": 0
+        }],
+        [{
+          "node": "Has PDF?",
+          "type": "main",
+          "index": 0
+        }]
+      ]
+    },
+    "Has PDF?": {
+      "main": [
+        [{
+          "node": "Acknowledge First PDF",
+          "type": "main",
+          "index": 0
+        }],
+        [{
+          "node": "Send Instructions",
+          "type": "main",
+          "index": 0
+        }]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

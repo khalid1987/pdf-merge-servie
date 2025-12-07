@@ -1,0 +1,133 @@
+{
+  "name": "Test - Call PDF Merge Workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "When clicking 'Test workflow'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://ontheline.trincoll.edu/images/bookdown/sample-local-pdf.pdf",
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "read-pdf1",
+      "name": "Download Test PDF 1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 240]
+    },
+    {
+      "parameters": {
+        "url": "https://ontheline.trincoll.edu/images/bookdown/sample-local-pdf.pdf",
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "read-pdf2",
+      "name": "Download Test PDF 2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 360]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "mergeByPosition",
+        "options": {}
+      },
+      "id": "merge-before-call",
+      "name": "Combine Both PDFs",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "workflowId": "={{ $parameter.workflowId }}",
+        "options": {}
+      },
+      "id": "call-merge-workflow",
+      "name": "Call PDF Merge Workflow",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [900, 300],
+      "notes": "Configure this node:\n1. Click on the node\n2. Select 'Workflow' > choose 'PDF Merge - Subworkflow'"
+    },
+    {
+      "parameters": {
+        "content": "## Test Workflow - Calls Merge Subworkflow\n\n**Setup:**\n1. Click 'Call PDF Merge Workflow' node\n2. Select 'PDF Merge - Subworkflow' in dropdown\n3. Click 'Test workflow' button\n\nDownloads 2 test PDFs, combines them, then passes to merge subworkflow.",
+        "height": 340,
+        "width": 420,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [240, 20],
+      "id": "note",
+      "name": "Instructions"
+    }
+  ],
+  "connections": {
+    "When clicking 'Test workflow'": {
+      "main": [[
+        {
+          "node": "Download Test PDF 1",
+          "type": "main",
+          "index": 0
+        },
+        {
+          "node": "Download Test PDF 2",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Download Test PDF 1": {
+      "main": [[
+        {
+          "node": "Combine Both PDFs",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Download Test PDF 2": {
+      "main": [[
+        {
+          "node": "Combine Both PDFs",
+          "type": "main",
+          "index": 1
+        }
+      ]]
+    },
+    "Combine Both PDFs": {
+      "main": [[
+        {
+          "node": "Call PDF Merge Workflow",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

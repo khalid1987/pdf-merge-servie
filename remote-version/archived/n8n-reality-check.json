@@ -1,0 +1,22 @@
+{
+  "name": "PDF Merge - Reality Check",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## The Hard Truth About n8n + Multiple Binary Files\n\n### What We've Learned:\n\n❌ **n8n Code node**: Sandboxed, no fs/child_process access\n❌ **n8n HTTP Request**: Cannot send multiple binary files in multipart\n❌ **Moving Binary Data node**: Doesn't solve multipart issue\n❌ **Merge/Combine nodes**: Can't create proper binary structure\n\n✅ **What DOES Work:**\n1. **Web UI** (http://95.216.205.234:8081) - Client can test easily\n2. **Direct curl** - Proven to work\n3. **Webhook receiving files** - Works but needs proper setup\n\n### Recommended Solution for Main Workflow:\n\n**Option 1: Use Execute Command Node** (if available)\n- Write PDFs to files via Code node workarounds\n- Call external bash script with curl\n\n**Option 2: Deploy Stirling on Same Server as n8n**\n- Run Stirling in Docker on n8n server\n- Use shared volume to pass files\n- No network transfer needed\n\n**Option 3: Create a Simple Proxy Service**\n- Small Node.js service that accepts base64 PDFs\n- Converts to files and calls Stirling\n- Returns result\n\n### For Testing:\n**Use the web UI**: http://95.216.205.234:8081\n- Simple drag & drop interface\n- No n8n complexity\n- Direct connection to Stirling PDF\n\n### Next Steps:\nWhich option do you prefer for the production workflow?",
+        "height": 720,
+        "width": 600,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [240, 20],
+      "id": "summary",
+      "name": "Summary"
+    }
+  ],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

@@ -1,0 +1,144 @@
+{
+  "name": "Test PDF Merge - Simple",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "When clicking 'Test workflow'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "download-test-pdf1",
+      "name": "Download Test PDF 1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 240]
+    },
+    {
+      "parameters": {
+        "url": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "download-test-pdf2",
+      "name": "Download Test PDF 2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 360]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "multiplex",
+        "options": {}
+      },
+      "id": "merge-inputs",
+      "name": "Combine Both PDFs",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://95.216.205.234:8080/api/v1/general/merge-pdfs",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": []
+        },
+        "sendBinaryData": true,
+        "options": {
+          "batchSize": -1,
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "call-stirling",
+      "name": "Call Stirling PDF Merge",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "content": "## Simple Test Workflow\n\n1. Click 'Test workflow' button\n2. Downloads 2 PDFs in parallel\n3. Combines them with Multiplex\n4. Sends to Stirling PDF\n5. Returns merged PDF!",
+        "height": 280,
+        "width": 380,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [240, 60],
+      "id": "note",
+      "name": "Instructions"
+    }
+  ],
+  "connections": {
+    "When clicking 'Test workflow'": {
+      "main": [[
+        {
+          "node": "Download Test PDF 1",
+          "type": "main",
+          "index": 0
+        },
+        {
+          "node": "Download Test PDF 2",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Download Test PDF 1": {
+      "main": [[
+        {
+          "node": "Combine Both PDFs",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Download Test PDF 2": {
+      "main": [[
+        {
+          "node": "Combine Both PDFs",
+          "type": "main",
+          "index": 1
+        }
+      ]]
+    },
+    "Combine Both PDFs": {
+      "main": [[
+        {
+          "node": "Call Stirling PDF Merge",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

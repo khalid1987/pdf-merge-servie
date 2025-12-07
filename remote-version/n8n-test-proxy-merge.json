@@ -1,0 +1,203 @@
+{
+  "name": "Test PDF Merge Proxy",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://ontheline.trincoll.edu/images/bookdown/sample-local-pdf.pdf",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "download1",
+      "name": "Download PDF 1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 240]
+    },
+    {
+      "parameters": {
+        "url": "https://ontheline.trincoll.edu/images/bookdown/sample-local-pdf.pdf",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "download2",
+      "name": "Download PDF 2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 360]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Rename binary property from 'data' to 'pdf2'\nconst item = $input.item;\nreturn {\n  json: item.json,\n  binary: {\n    pdf2: item.binary.data\n  }\n};"
+      },
+      "id": "rename-pdf2",
+      "name": "Rename to pdf2",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [600, 360]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Rename binary property from 'data' to 'pdf1'\nconst item = $input.item;\nreturn {\n  json: item.json,\n  binary: {\n    pdf1: item.binary.data\n  }\n};"
+      },
+      "id": "rename-pdf1",
+      "name": "Rename to pdf1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [600, 240]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "mergeByPosition",
+        "options": {}
+      },
+      "id": "merge",
+      "name": "Combine Items",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [820, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all binary data from the merged item\nconst item = $input.item;\nconst binaryKeys = Object.keys(item.binary || {});\n\nconsole.log('Binary keys found:', binaryKeys);\n\nif (binaryKeys.length < 2) {\n  throw new Error(`Expected 2 PDFs, got ${binaryKeys.length}. Binary keys: ${binaryKeys.join(', ')}`);\n}\n\n// Prepare files array for proxy\nconst files = binaryKeys.map(key => {\n  const binary = item.binary[key];\n  console.log(`Processing ${key}:`, binary.fileName);\n  return {\n    data: binary.data,\n    filename: binary.fileName || `${key}.pdf`\n  };\n});\n\nconsole.log(`Prepared ${files.length} files for merge`);\n\nreturn {\n  json: {\n    files: files\n  }\n};"
+      },
+      "id": "prepare",
+      "name": "Prepare for Proxy",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1040, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://95.216.205.234:3000/merge",
+        "sendBody": true,
+        "contentType": "json",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "files",
+              "value": "={{ $json.files }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "call-proxy",
+      "name": "Call Merge Proxy",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1260, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Convert response back to binary\nconst response = $input.item.json;\n\nreturn {\n  json: {\n    success: response.success,\n    filename: response.filename,\n    size: response.size\n  },\n  binary: {\n    data: {\n      data: response.data,\n      mimeType: response.mimeType,\n      fileName: response.filename\n    }\n  }\n};"
+      },
+      "id": "convert-back",
+      "name": "Convert to Binary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1480, 300]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [[
+        {
+          "node": "Download PDF 1",
+          "type": "main",
+          "index": 0
+        },
+        {
+          "node": "Download PDF 2",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Download PDF 1": {
+      "main": [[
+        {
+          "node": "Rename to pdf1",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Rename to pdf1": {
+      "main": [[
+        {
+          "node": "Combine Items",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Download PDF 2": {
+      "main": [[
+        {
+          "node": "Rename to pdf2",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Rename to pdf2": {
+      "main": [[
+        {
+          "node": "Combine Items",
+          "type": "main",
+          "index": 1
+        }
+      ]]
+    },
+    "Combine Items": {
+      "main": [[
+        {
+          "node": "Prepare for Proxy",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Prepare for Proxy": {
+      "main": [[
+        {
+          "node": "Call Merge Proxy",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Call Merge Proxy": {
+      "main": [[
+        {
+          "node": "Convert to Binary",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

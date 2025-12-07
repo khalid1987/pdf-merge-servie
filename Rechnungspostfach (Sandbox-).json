@@ -1,0 +1,4187 @@
+{
+  "name": "Rechnungspostfach (Sandbox)",
+  "nodes": [
+    {
+      "parameters": {
+        "inputText": "=From: {{ $('E-Mail an rechnung@vorderegger.org').item.json.toRecipients[0].emailAddress.name }}\nSubject: {{ $('E-Mail an rechnung@vorderegger.org').item.json.subject }}\nBody: {{ $json.message.content }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "Rechnungen - Allgemein",
+              "description": "=Lieferanten und Rechnungsleger wenden sich mit Rechnungen an uns, welche unsere Hausverwaltung und unser Unternehmen betreffen. Oft steht hier eine Leistung, welche für eine gewisse Liegenschaft erbracht wurde oder für einen unserer Unternehmen. Manchmal enthalten die E-Mails auch nur eine Signatur und haben keinen Text.\nKeywords: Rechnung, WEG, Hausbetreuung, Immobilienverwaltung, Wartung, bitte um Begleichung, Zahlung, RE, Honorarnote, im Anhang erhalten Sie Ihren Beleg, STADT:SALZBURG, Abfallservice, Schloss Profi\nfrom: Brevo <contact@t.brevo.com>"
+            },
+            {
+              "category": "Mitteilung von Finanzonline",
+              "description": "=Nachrichten von finanzonline\nKeywords: neue UID-Bestätigung in Ihren Nachrichten, finanzonline.bmf.gv.at, Finanzamt"
+            },
+            {
+              "category": "Casavi-System-Mails",
+              "description": "=E-Mails, welche systemautomatisiert von mycasavi.com an uns versendet werden und oft Informationen zu Vorgängen, Anfragen und Tasks enthalten.\nKeywords: Anfrage wurde geteilt, Anfrage wurde geschlossen, Anfrage hat einen neuen Status, Anfrage Kommentieren"
+            },
+            {
+              "category": "Mahnungen",
+              "description": "=Lieferanten und Rechnungsleger wenden sich mit Mahnungen an uns, welche unsere Hausverwaltung und unser Unternehmen betreffen. Oft wird hier eine Zahlung und/oder Erledigung einer Zahlung gefordert und mit einer Frist versehen. Sie möchte uns höflich darauf hinweisen, dass die Rechnung noch nicht beim Lieferanten eingegangen ist und bitten um zeitnahe Bezahlung der Rechnung. Ein Hinweis auf eine Mahnung kann auch sein, dass der Hinweis im Email steht, dass die Rechnung noch offen ist.\nKeywords: Mahnung, Erledigung, offene Rechnung, offene Posten, Zahlungsaufforderung, Begleichung der Rechnung, Zahlungserinnerung, diese Rechnung ist noch offen, bitte um Überweisung"
+            },
+            {
+              "category": "Avisomails",
+              "description": "=E-Mails mit Anhängen, welche Avisobriefe und Avisos beinhalten. Oft sind diese Nachrichten leer oder enthalten einen Standard Text.\nKeywords: Aviso, Avisobrief, Automatische BMD-Connector-Mail: OASE, Microsoft E-Mails, Bevorstehende Lastschriftzahlung an Helium Srl, Neuigkeiten zu deinem Canva Teams-Abonnement, Top-Angebote für Unternehmen\nfrom: dassalz@srv4.detco.de, no-reply@canva.com, no-reply@business.amazon.de"
+            },
+            {
+              "category": "Diverses",
+              "description": "=E-Mails mit Anhängen, welche nicht kategorisiert werden können, das sind alle welche nicht in die vorgenannten Kategorien passen.\nKeywords: Bescheid, Grundsteuerbescheid, Grundsteuerbefreiung, Serviceeinsatz vor Ort"
+            },
+            {
+              "category": "Rückfragen",
+              "description": "=E-Mails von Lieferanten, welche uns bitten Informationen und/oder Rechnungen zu übermitteln, Ihnen Rechnungen zu senden, Rechnungen zukommen zu lassen.\nKeywords: benötige bitte die Rechnung, zukommen lassen"
+            },
+            {
+              "category": "Briefbutler",
+              "description": "=E-Mails von @briefbutler.at mit einer elektronischen Briefsendung und einer Frist bis wann der Brief bereit liegt.\nKeywords: Ihre elektronische Briefsendung, Online-Abruf, Benachrichtigung über die Hinterlegung einer digitalen Sendung"
+            },
+            {
+              "category": "PayLife",
+              "description": "=Nachrichten mit Kreditkartenabrechnungen von PayLife (@paylife.at). Diese Mails sind automatisierte Mails und enthalten den Hinweis, dass die Abrechnung über eine Website oder App heruntergeladen werden kann.\nKeywords: paylife.at, PayLife Kreditkartenabrechnung"
+            },
+            {
+              "category": "expedia",
+              "description": "Nachrichten von expedia oder Travelscape, LLC (@expedia.com). Diese Mails sind automatisierte Mails und enthalten den Hinweis zu einer Auszahlung an unsere Bank mit der Verbindung XXXXXXX4524\nKeywords: REMITTANCE ADVICE, Expedia ID 76587667, Your statement of payment from Expedia is now available"
+            },
+            {
+              "category": "openAi",
+              "description": "=Nachrichten von OpenAi (@tm.openai.com). Diese Mails sind automatisierte Mails und enthalten den Hinweis zu einer Belastung unserer Kreditkarte|Keywords: Your OpenAI API account has been funded, fund your OpenAI API credit"
+            }
+          ]
+        },
+        "options": {
+          "fallback": "other"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1.1,
+      "position": [
+        -1296,
+        672
+      ],
+      "id": "f6fe029a-44bd-4b0c-ba24-d64348918ce5",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1168,
+        1280
+      ],
+      "id": "6fe16583-279f-40da-8200-2377a3bdf47d",
+      "name": "OpenAI - Prüfung Inhalt",
+      "credentials": {
+        "openAiApi": {
+          "id": "8XQTkmdkkqaQUWO9",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Here is an incoming email:  {{ $json.body.content }}"
+            },
+            {
+              "content": "Take the incoming email and clean it up so it is more readable.- Get rid of the HTML tagging, but don't get rid of the email content. Don't include a subject.\nPlease include attachments",
+              "role": "system"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -1648,
+        672
+      ],
+      "id": "4976a3d9-a4d6-4073-8486-e09d5127077c",
+      "name": "Clean E-Mail",
+      "credentials": {
+        "openAiApi": {
+          "id": "8XQTkmdkkqaQUWO9",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "output": "raw",
+        "filters": {
+          "foldersToInclude": [
+            "AAMkADRmNDg4N2VkLTE1YzgtNDc3OS1hODEwLTkzNjRkODBlZjRhYgAuAAAAAADVfhWVs9n8Sqys2PgXYnSZAQD4Uc69Lf-WRq38dDz8P_ZtAAAAAAEMAAA="
+          ]
+        },
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlookTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1872,
+        672
+      ],
+      "id": "19c92e39-5380-450b-aa77-3f5928e8ebe8",
+      "name": "E-Mail an rechnung@vorderegger.org",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "fc8BvlRgUc8X6PFM",
+          "name": "Microsoft Outlook | rechnung@vorderegger.org"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "messageId": {
+          "__rl": true,
+          "value": "={{ $('E-Mail an rechnung@vorderegger.org').item.json.id }}",
+          "mode": "id"
+        },
+        "updateFields": {
+          "categories": [
+            "erledigt von WF"
+          ],
+          "isRead": false
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        -896,
+        656
+      ],
+      "id": "4c207ec4-5b58-40fb-9f0e-d292c42e3216",
+      "name": "Update (Read, category) Rechnungen",
+      "webhookId": "57098da9-1afd-463a-96c3-0dcb820ddb25",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "fc8BvlRgUc8X6PFM",
+          "name": "Microsoft Outlook | rechnung@vorderegger.org"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.token }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1104,
+        1184
+      ],
+      "id": "9191b204-9dbc-40ed-9c37-9d1c71b7451c",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=diese Tabelle enthält sämtliche Liegenschaften, die Nummern der Liegenschaften, die Adresse, UID-Nummer, die Kontonummer des Betriebskostenkontos (BK-Konto), die Kontonummer des Rücklagenkontos (RL-Konto), die Rechnungsadresse und die Typologie (WEG/MRG)",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "DMiefQuI0R6dgL4Q",
+          "mode": "list",
+          "cachedResultName": "Liegenschaften",
+          "cachedResultUrl": "/projects/BSyhBQ7yfPPEIdus/datatables/DMiefQuI0R6dgL4Q"
+        },
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}"
+      },
+      "type": "n8n-nodes-base.dataTableTool",
+      "typeVersion": 1,
+      "position": [
+        1232,
+        1184
+      ],
+      "id": "e215dffa-ed5e-4849-845e-4201fd3a19e0",
+      "name": "Liegenschaften"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=dieses Tool (Tabelle) enthält sämtliche Informationen zu unseren Unternehmen, wie etwa Name, Gesellschafter, Geschäftsführer, Firmenbuchnummer, UID-Nummer, Bankkontonummer (IBAN), Stammkapital, eingezahltes Stammkapital, Adresse, GGewerbe (GISA), Unternehmensgegenstand, Gründungsdatum",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "H8zPPIhL6GuaxR3b",
+          "mode": "list",
+          "cachedResultName": "Unternehmen",
+          "cachedResultUrl": "/projects/BSyhBQ7yfPPEIdus/datatables/H8zPPIhL6GuaxR3b"
+        },
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}"
+      },
+      "type": "n8n-nodes-base.dataTableTool",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        1184
+      ],
+      "id": "c08292e9-d017-49d8-a446-1d3bf2d34fda",
+      "name": "Unternehmen"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        976,
+        1184
+      ],
+      "id": "9d413a6c-d1e0-4da4-8224-71310d321558",
+      "name": "Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "8XQTkmdkkqaQUWO9",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2032,
+        1184
+      ],
+      "id": "a5c145ee-0453-47e1-bce4-51c9f585d6b4",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "8XQTkmdkkqaQUWO9",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "messageId": {
+          "__rl": true,
+          "value": "={{ $('Get message again').item.json.id }}",
+          "mode": "id"
+        },
+        "updateFields": {
+          "categories": [
+            "RE Hausverwaltung",
+            "erledigt von WF"
+          ],
+          "isRead": true
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        2512,
+        768
+      ],
+      "id": "1bf458e5-5853-438e-82cd-d95895240888",
+      "name": "Kategorie \"RE Hausverwaltung\"",
+      "webhookId": "2d9679c7-8231-4bf5-bd38-b28dca2ad1f4",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "fc8BvlRgUc8X6PFM",
+          "name": "Microsoft Outlook | rechnung@vorderegger.org"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "chatgpt-4o-latest",
+          "mode": "list",
+          "cachedResultName": "CHATGPT-4O-LATEST"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=## Task\n\nUsing the input in '{{ $json.text}}', extract and return a clean JSON object with the following structure:\n\n```json\n{\n  \"date\": \"DD.MM.YYYY\",\n  \"invoice_number\": \"\",\n  \"invoice_issuer\": \"\",\n  \"Client Name\": \"\",\n  \"property\": \"\",\n  \"Total\": \"\",\n  \"service_provided\": \"\",\n  \"IBAN\": \"\",\n  \"UID\": \"\",\n  \"KundNr\": \"\",\n  \"Line Items\": []\n}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        144,
+        960
+      ],
+      "id": "80184f3d-7df4-47cd-84f0-9e4c01e763d3",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "8XQTkmdkkqaQUWO9",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "jcpc0ecivMSBKYHE",
+          "mode": "list",
+          "cachedResultName": "Rechnungen",
+          "cachedResultUrl": "/projects/BSyhBQ7yfPPEIdus/datatables/jcpc0ecivMSBKYHE"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "from": "={{ $json.message.content.invoice_issuer }}",
+            "date": "={{ $json.message.content.date }}",
+            "to": "={{ $json.message.content['Client Name'] }}",
+            "service_provided": "={{ $json.message.content.service_provided }}",
+            "invoice_number": "={{ $json.message.content.invoice_number }}",
+            "property": "={{ $json.message.content.property }}",
+            "IBAN": "={{ Array.isArray($json.message.content.IBAN) ? $json.message.content.IBAN[0] : $json.message.content.IBAN }}",
+            "UID": "={{ $json.message.content.UID }}",
+            "KundNr": "={{ $json.message.content.KundNr }}",
+            "Total": "={{ $json.message.content.Total }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "invoice_number",
+              "displayName": "invoice_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "from",
+              "displayName": "from",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "to",
+              "displayName": "to",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "property",
+              "displayName": "property",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "service_provided",
+              "displayName": "service_provided",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "UID",
+              "displayName": "UID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "IBAN",
+              "displayName": "IBAN",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "KundNr",
+              "displayName": "KundNr",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Total",
+              "displayName": "Total",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        560,
+        960
+      ],
+      "id": "92ed0e79-8dd3-4153-beda-6f8a5ec00086",
+      "name": "insert row in \"Rechnungen\""
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Du erhältst eine neue Rechnung zur Prüfung. Bitte entscheide, ob diese Rechnung in die Unternehmensbuchhaltung oder in die Hausverwaltungsbuchhaltung gehört. Wenn kein Gesamtbetrag erkennbar ist, dann entscheide, dass es sich um ein sonstiges Dokument handelt.\n\nDatum: {{ $('insert row in \"Rechnungen\"').item.json.date }}, \nRechnungsnummer: {{ $('insert row in \"Rechnungen\"').item.json.invoice_number }}, \nRechnungsaussteller: {{ $('insert row in \"Rechnungen\"').item.json.from }}, \nRechnungsempfänger: {{ $('insert row in \"Rechnungen\"').item.json.to }}, \nLiegenschaft: {{ $('insert row in \"Rechnungen\"').item.json.property }}, \nerbrachte Leistung: {{ $('insert row in \"Rechnungen\"').item.json.service_provided }}, \nUID: {{ $('insert row in \"Rechnungen\"').item.json.UID }}, \nIBAN: {{ $('insert row in \"Rechnungen\"').item.json.IBAN }},\nKundennummer: {{ $('insert row in \"Rechnungen\"').item.json.KundNr }},\nGesamtbetrag: {{ $('insert row in \"Rechnungen\"').item.json.Total }}",
+        "options": {
+          "systemMessage": "=## Rolle und Ziel\nDu bist ein prüfender Buchhaltungs-Agent. Deine Aufgabe ist es, eingehende Rechnungen eindeutig einer von drei Kategorien zuzuordnen:\n\n- Unternehmensbuchhaltung\n- Hausverwaltungsbuchhaltung\n- sonstiges Dokument\n\nDu entscheidest ausschließlich auf Basis der Rechnungsdaten und durch Abgleich mit bereitgestellten Referenzdaten (Tools wie Datentabellen/Lookups). Wenn nötig, stellst du gezielte Tool-Abfragen, um Unsicherheiten zu klären. Antworte immer auf Deutsch.\n\n## Eingaben\nRechnungs-Metadaten: \n- Datum (date)\n- Rechnungsnummer (invoice_number)\n- Rechnungsaussteller (from)\n- Rechnungsempfänger (to)\n- Liegenschaft (property)\n- Leistung (service_provided)\n- UID-Nummer (UID)\n- Bankverbindung (IBAN)\n- Kundennummer (KundNr)\n- Gesamtbetrag (Total)\n\n## Kontext: Liste möglicher Unternehmensentitäten, Hausverwaltungs-Objekt- und Mieterliste, Liegenschaftenliste, Lieferantenstammdaten, Vertrags-/Zuordnungsregeln.\n\n## Tools\n- Liegenschaften\n- Unternehmen\n- Vertrags-/Zuordnungsregeln\n- Ticket-Abfrage in Casavi\n\n## Entscheidungslogik (vereinfachte Heuristik – streng befolgen)\n\nPrüfe erst harte Zuordnungsindikatoren:\n\nObjekt-/Liegenschaftsbezug: Wenn Rechnung klar auf ein Hausverwaltungsobjekt (Adresse, Objekt-ID, Mieterkonto, WEG, Hausnummernkreis, Verwalter-Nr.) verweist → Hausverwaltungsbuchhaltung.\n\nVertragliche Bindung: Wenn Lieferant/Leistung laut Verträgen/Referenzdaten einem bestimmten Objekt oder der Hausverwaltung zugeordnet ist → Hausverwaltungsbuchhaltung.\n\nUnternehmensweite Leistungen: Wenn Leistung eindeutig unternehmensweit bzw. ohne Objektbezug ist (z. B. Softwarelizenzen des Unternehmens, allgemeines Marketing, Büromiete Unternehmenssitz) → Unternehmensbuchhaltung.\n\nPrüfe weiche Indikatoren:\n\nLieferantengruppe/Branche (z. B. Hausmeisterservice, Gebäudereinigung, Energie/Wasser/Müll typischerweise objektbezogen → Hausverwaltung; Unternehmensberatung, allgemeine IT-Lizenzen typischerweise → Unternehmen).\n\nHistorische Zuordnung laut Supplier-/Rechnungs-Historie.\n\nKostenstelle/Kontenplan: Objekt-/Mieter-/WEG-Konten → Hausverwaltung; Unternehmens-Kostenstellen → Unternehmen.\n\nKonflikte und Ambiguität:\n\nWenn harte Indikatoren widersprechen, nutze Tools (Supplier-/Property-/Contract-Lookups), um den Konflikt aufzulösen.\n\nWenn nach maximal 3 gezielten Tool-Abfragen keine eindeutige Entscheidung möglich ist, markiere die Rechnung als “sonstiges Dokument” und gib klare Nachforderungsfelder aus (z. B. fehlende Objekt-ID, fehlender Vertrag).\n\n## Compliance und Plausibilität:\n- Prüfe auf Black-/Whitelist-Regeln.\n- Prüfe Leistungszeitraum vs. Vertragslaufzeit.\n- Prüfe, ob Betrag/Steuersatz plausibel zu Branche/Leistung passt (nur einfache Plausibilitätsprüfung, keine Steuerberatung).\n\n## Arbeitsweise\n- Sei deterministisch, prüfe schrittweise, dokumentiere kurz deine Begründung.\n- Nutze Tools nur, wenn sie den Erkenntnisgewinn erhöhen; stelle minimal notwendige, präzise Anfragen.\n- Keine Halluzinationen: Wenn Daten fehlen, fordere sie strukturiert nach (siehe Output-Schema “missing_info”).\n- Vertraulichkeit: Nutze Eingaben und Tool-Rückgaben nur zur Entscheidung; gib keine sensiblen Rohdaten im Klartext zurück, sondern referenziere IDs/Schlüssel.\n- Bevorzuge harte Fakten vor Heuristiken. Wenn beides fehlt: “sonstiges Dokument”.\n\n## Ausgabeformat (strikt einhalten, JSON)\nGib ausschließlich ein einzelnes, gültiges JSON-Objekt zurück, ohne zusätzlichen Text. Felder:\n\n{\n\"routing\": \"unternehmensbuchhaltung\" | \"hausverwaltungsbuchhaltung\" | \"sonstiges Dokument\",\n\"confidence\": 0.0-1.0,\n\"reason_short\": \"max. 240 Zeichen, prägnante Begründung\",\n\"evidence\": {\n\"supplier_match\": {\"supplier_id\": \"…\", \"match_score\": 0.0-1.0, \"notes\": \"…\"},\n\"property_match\": {\"property_id\": \"…\", \"match_score\": 0.0-1.0, \"notes\": \"…\"},\n\"contract_match\": {\"contract_id\": \"…\", \"valid_on\": \"YYYY-MM-DD\", \"notes\": \"…\"},\n\"costcenter_match\": {\"code\": \"…\", \"type\": \"unternehmen|objekt|mieter|weg\", \"notes\": \"…\"},\n\"keywords\": [\"relevante\", \"Stichworte\", \"aus\", \"Leistungsbeschreibung\"]\n},\n\"controls\": {\n\"blacklist_hit\": false,\n\"whitelist_hit\": false,\n\"flags\": [\"optional: z.B. 'mismatch_period'\", \"…\"]\n},\n\"missing_info\": [\n{\"field\": \"z.B. property_id\", \"why_needed\": \"klärt Objektbezug\"},\n{\"field\": \"z.B. contract_id\", \"why_needed\": \"prüft Bindung an Objekt/Unternehmen\"}\n],\n\"next_actions\": [\n\"z.B. property_lookup mit Adresse\",\n\"z.B. contract_lookup mit Lieferant+Zeitraum\"\n],\n\"references\": {\n\"invoice_id\": \"…\",\n\"invoice_date\": \"YYYY-MM-DD\",\n\"amount\": {\"value\": 1234.56, \"currency\": \"EUR\"},\n\"supplier_name\": \"…\"\n}\n}\n\n## Konkrete Regeln/Beispiele (anpassen/erweitern, falls Datenlage vorhanden)\n\nEnergieversorger, Wasser, Müll, Schornsteinfeger, Liftwartung, Winterdienst, Hausmeister: typischerweise Hausverwaltungsbuchhaltung, sofern objektbezogen (Adresse/Objekt-ID/WEG-Bezug). Ohne Objektbezug → Tool-Abgleich erzwingen.\n\nBürobedarf für Unternehmenszentrale, allgemeine IT-Lizenzen (Microsoft 365, Buchhaltungssoftware), Unternehmensberatung, Domain/Hosting des Unternehmens: Unternehmensbuchhaltung.\n\nReparaturen/Instandhaltung mit klarer Objektadresse: Hausverwaltungsbuchhaltung.\n\nVersicherung: Gebäudeversicherung mit Objekt-/WEG-Referenz → Hausverwaltung; Unternehmenshaftpflicht/Elektronikversicherung → Unternehmen.\n\nTelekommunikation/Internet: Leitungs-/Anschlussbezug zu Objekt → Hausverwaltung; zentrale Unternehmensanschlüsse → Unternehmen.\n\n## Tool-Nutzung (Richtlinien)\n\nlookup_supplier: Suche nach Lieferant, bisherigen Zuordnungen, validen Verträgen, Standardrouting. Nutze eindeutige Keys (z. B. supplier_vat_id, supplier_id), falls vorhanden.\n\nlookup_property: Suche über Objekt-ID, Adresse, Mieterkonto, WEG-Nummer. Prüfe aktive Verwaltung im Leistungszeitraum.\n\nlookup_contract: Prüfe, ob Lieferant/Leistung vertraglich einem Objekt oder dem Unternehmen zugeordnet ist. Validität: Leistungsdatum innerhalb Vertragslaufzeit.\n\nlookup_costcenter: Prüfe, ob angegebene Kostenstelle ein Objekt-/Mieter-/WEG-Konto (→ Hausverwaltung) oder Unternehmens-Kostenstelle ist.\n\nlookup_blacklist_whitelist: Erzwinge Sperr-/Bevorzugungslogiken.\n\nKonfliktauflösung\n\nPriorität: contract_match > property_match > costcenter_match > supplier_history > keywords/Heuristik.\n\nWenn contract_match und property_match widersprechen: Vertrag gewinnt, es sei denn Vertrag abgelaufen/inkonsistent → flag “contract_inconsistency”, wechsle auf property_match.\n\nBei fehlenden Daten: routing = \"unklar\", fülle \"missing_info\" und \"next_actions\".\n\nGrenzen\n\nKeine steuerliche oder rechtliche Beratung; nur Routing-Entscheidung.\n\nKeine Freitexte außerhalb des JSON.\n\nKeine Annahmen über fehlende Felder ohne Kennzeichnung in \"missing_info\".\n\nBeispielausgaben\n\nBeispiel 1 (klar Hausverwaltung):\n{\n\"routing\": \"hausverwaltungsbuchhaltung\",\n\"confidence\": 0.93,\n\"reason_short\": \"Rechnung bezieht sich auf Objekt 540 (Liftwartung, Vertrag gültig im Leistungszeitraum).\",\n\"evidence\": {\n\"supplier_match\": {\"supplier_id\": \"SUP-4711\", \"match_score\": 0.88, \"notes\": \"historisch objektbezogen\"},\n\"property_match\": {\"property_id\": \"A102\", \"match_score\": 0.95, \"notes\": \"Adresse identisch mit Rechnung\"},\n\"contract_match\": {\"contract_id\": \"C-8891\", \"valid_on\": \"2025-09-15\", \"notes\": \"Wartungsvertrag Lift A102\"},\n\"costcenter_match\": {\"code\": \"WEG-A102-471\", \"type\": \"weg\", \"notes\": \"WEG-Konto\"},\n\"keywords\": [\"Liftwartung\", \"Wartungsvertrag\", \"A102\"]\n},\n\"controls\": {\"blacklist_hit\": false, \"whitelist_hit\": true, \"flags\": []},\n\"missing_info\": [],\n\"next_actions\": [],\n\"references\": {\n\"invoice_id\": \"INV-2025-1009\",\n\"invoice_date\": \"2025-09-20\",\n\"amount\": {\"value\": 642.30, \"currency\": \"EUR\"},\n\"supplier_name\": \"AufzugPlus GmbH\"\n}\n}\n\nBeispiel 2 (klar Unternehmen):\n{\n\"routing\": \"unternehmensbuchhaltung\",\n\"confidence\": 0.89,\n\"reason_short\": \"Allgemeine Microsoft 365-Lizenzen ohne Objektbezug; Kostenstelle U-IT-100.\",\n\"evidence\": {\n\"supplier_match\": {\"supplier_id\": \"SUP-0123\", \"match_score\": 0.92, \"notes\": \"zentrale IT-Lizenzen\"},\n\"property_match\": {\"property_id\": null, \"match_score\": 0.0, \"notes\": \"kein Objektbezug\"},\n\"contract_match\": {\"contract_id\": \"C-5566\", \"valid_on\": \"2025-08-01\", \"notes\": \"Unternehmenslizenzvertrag\"},\n\"costcenter_match\": {\"code\": \"U-IT-100\", \"type\": \"unternehmen\", \"notes\": \"IT-Kostenstelle\"},\n\"keywords\": [\"Lizenz\", \"Microsoft 365\", \"Tenant\"]\n},\n\"controls\": {\"blacklist_hit\": false, \"whitelist_hit\": false, \"flags\": []},\n\"missing_info\": [],\n\"next_actions\": [],\n\"references\": {\n\"invoice_id\": \"MS-2025-08-777\",\n\"invoice_date\": \"2025-08-31\",\n\"amount\": {\"value\": 1890.00, \"currency\": \"EUR\"},\n\"supplier_name\": \"Microsoft Ireland Operations Ltd.\"\n}\n}\n\nBeispiel 3 (unklar, Nachforderung):\n{\n\"routing\": \"sonstiges Dokument\",\n\"confidence\": 0.41,\n\"reason_short\": \"Leistungsbeschreibung deutet auf Reinigung, es fehlt aber Objekt-/WEG-Referenz.\",\n\"evidence\": {\n\"supplier_match\": {\"supplier_id\": \"SUP-2233\", \"match_score\": 0.62, \"notes\": \"teils objektbezogen\"},\n\"property_match\": {\"property_id\": null, \"match_score\": 0.0, \"notes\": \"keine Adresse/Objekt-ID in Rechnung\"},\n\"contract_match\": {\"contract_id\": null, \"valid_on\": null, \"notes\": \"kein Vertrag gefunden\"},\n\"costcenter_match\": {\"code\": null, \"type\": null, \"notes\": \"keine Angaben\"},\n\"keywords\": [\"Reinigung\", \"Hausmeisterservice\"]\n},\n\"controls\": {\"blacklist_hit\": false, \"whitelist_hit\": false, \"flags\": [\"missing_property_ref\"]},\n\"missing_info\": [\n{\"field\": \"property_id oder Objektadresse\", \"why_needed\": \"Zuordnung zur Hausverwaltung prüfen\"},\n{\"field\": \"contract_id (falls vorhanden)\", \"why_needed\": \"Bindung an Objekt/Unternehmen klären\"}\n],\n\"next_actions\": [\n\"property_lookup mit Rechnungsbetreff/Anlagen durchsuchen\",\n\"contract_lookup mit Lieferant+Zeitraum\"\n],\n\"references\": {\n\"invoice_id\": \"R-2025-0915-33\",\n\"invoice_date\": \"2025-09-15\",\n\"amount\": {\"value\": 420.00, \"currency\": \"EUR\"},\n\"supplier_name\": \"Clean&Care KG\"\n}\n}\n\n## Fehler- und Ausnahmebehandlung\n- Tool nicht erreichbar → setze Flag “tool_unavailable:<name>” in controls.flags, reduziere confidence und erkläre in reason_short knapp die Einschränkung.\n- Widersprüchliche Daten → setze Flag “conflict_<quelle>” und begründe knapp.\n- Ungültiger/inkonsistenter Zeitraum → setze Flag “mismatch_period”.\n\n## Leistungsanforderungen\n- Antworte nur mit JSON (siehe Schema).\n- Reaktionszeit optimieren: maximal 3 Tool-Calls pro Rechnung.\n- Bevorzuge eindeutige, nachvollziehbare Entscheidungen mit kurzer Begründung und Evidenz."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1296,
+        960
+      ],
+      "id": "b07c89d9-3ae0-4784-a328-6c645b017b76",
+      "name": "prüfender Buchhalter"
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.output }}\n{{ $('insert row in \"Rechnungen\"').item.json.date }}\n{{ $('insert row in \"Rechnungen\"').item.json.invoice_number }}\n{{ $('insert row in \"Rechnungen\"').item.json.from }}\n{{ $('insert row in \"Rechnungen\"').item.json.to }}\n{{ $('insert row in \"Rechnungen\"').item.json.property }}\n{{ $('insert row in \"Rechnungen\"').item.json.service_provided }}\n{{ $('insert row in \"Rechnungen\"').item.json.UID }}\n{{ $('insert row in \"Rechnungen\"').item.json.IBAN }}\n{{ $('insert row in \"Rechnungen\"').item.json.KundNr }}\n{{ $('insert row in \"Rechnungen\"').item.json.Total }}",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "routing",
+              "description": "Zuordnung zu Unternehmensbuchhaltung oder Hausverwaltungsbuchhaltung",
+              "required": true
+            },
+            {
+              "name": "recipient",
+              "description": "={{ $('insert row in \"Rechnungen\"').item.json.to }}",
+              "required": true
+            },
+            {
+              "name": "sender",
+              "description": "={{ $('insert row in \"Rechnungen\"').item.json.from }}",
+              "required": true
+            },
+            {
+              "name": "date",
+              "description": "={{ $('insert row in \"Rechnungen\"').item.json.date }}"
+            },
+            {
+              "name": "invoice_number",
+              "description": "={{ $('insert row in \"Rechnungen\"').item.json.invoice_number }}"
+            },
+            {
+              "name": "property",
+              "description": "={{ $('insert row in \"Rechnungen\"').item.json.property }}"
+            },
+            {
+              "name": "UID",
+              "description": "={{ $('insert row in \"Rechnungen\"').item.json.UID }}"
+            },
+            {
+              "name": "IBAN",
+              "description": "={{ $('insert row in \"Rechnungen\"').item.json.IBAN }}"
+            },
+            {
+              "name": "Kundennummer",
+              "description": "={{ $('insert row in \"Rechnungen\"').item.json.KundNr }}"
+            },
+            {
+              "name": "Gesamtbetrag",
+              "description": "={{ $('insert row in \"Rechnungen\"').item.json.Total }}"
+            },
+            {
+              "name": "service_provided",
+              "description": "={{ $('insert row in \"Rechnungen\"').item.json.service_provided }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        2032,
+        960
+      ],
+      "id": "eccd93f6-1f0d-44f3-8afb-b298bf00bbb4",
+      "name": "Information Extractor"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "messageId": {
+          "__rl": true,
+          "value": "={{ $('Get message again').item.json.id }}",
+          "mode": "id"
+        },
+        "updateFields": {
+          "categories": [
+            "RE Unternehmen",
+            "erledigt von WF"
+          ],
+          "isRead": true
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        2512,
+        960
+      ],
+      "id": "dc1bbfb2-0e4a-4ecb-b3cf-6f46a33b9d4f",
+      "name": "Kategorie \"Unternehmensbuchhaltung\"",
+      "webhookId": "cc58ac52-809c-45af-b185-526747886c70",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "fc8BvlRgUc8X6PFM",
+          "name": "Microsoft Outlook | rechnung@vorderegger.org"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f37f7f8e-0482-45c7-9e2d-c28301885613",
+              "name": "attachments_metadata",
+              "value": "={{ $('Get message again').item.binary.values() }}",
+              "type": "array"
+            },
+            {
+              "id": "2ea5ac89-f75b-4f86-a0bb-72068919d0cb",
+              "name": "message_id",
+              "value": "={{ $('Get message again').item.json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -208,
+        752
+      ],
+      "id": "91093634-14dc-459d-807f-026f7c1e2129",
+      "name": "attachments_metadata"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "attachments_metadata",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        16,
+        752
+      ],
+      "id": "32782720-a7fa-4cbd-83ca-beeec4155717",
+      "name": "Split Out attachments1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "05a8b913-e597-44b0-af4d-ac02a126e1eb",
+              "leftValue": "={{ $('Get a message').item.binary }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -608,
+        656
+      ],
+      "id": "16b7dcd4-4c03-4ad8-85ee-1c9a271c2cc2",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "messageId": {
+          "__rl": true,
+          "value": "={{ $('Get a message').item.json.id }}",
+          "mode": "id"
+        },
+        "output": "raw",
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        -432,
+        656
+      ],
+      "id": "b63384e9-02b5-4e44-9a05-04ef5d8fc891",
+      "name": "Get message again",
+      "webhookId": "8ce36db8-59d9-42bc-870c-12740971cf43",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "fc8BvlRgUc8X6PFM",
+          "name": "Microsoft Outlook | rechnung@vorderegger.org"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2080,
+        736
+      ],
+      "id": "5f049529-ab55-4a1b-ab10-9b5eaeddc629",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "messageId": {
+          "__rl": true,
+          "value": "={{ $('Update (Read, category) Rechnungen').item.json.id }}",
+          "mode": "id"
+        },
+        "output": "raw",
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        -736,
+        656
+      ],
+      "id": "48150911-00df-4bc4-806a-493f02f72f07",
+      "name": "Get a message",
+      "webhookId": "d2ed4fc6-9809-4a6c-a4f3-e9071cf839ba",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "fc8BvlRgUc8X6PFM",
+          "name": "Microsoft Outlook | rechnung@vorderegger.org"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f37f7f8e-0482-45c7-9e2d-c28301885613",
+              "name": "attachments",
+              "value": "={{ $('Get message again').item.binary.keys() }}",
+              "type": "array"
+            },
+            {
+              "id": "2ea5ac89-f75b-4f86-a0bb-72068919d0cb",
+              "name": "message_id",
+              "value": "={{ $('Get message again').item.json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -208,
+        576
+      ],
+      "id": "7d57dac5-d978-45db-8123-50811d1d80f1",
+      "name": "attachments"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "attachments",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        16,
+        576
+      ],
+      "id": "e37219d9-5c3b-4ed0-b98c-97f1f4e5f49b",
+      "name": "Split Out attachments"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        240,
+        576
+      ],
+      "id": "137b4e2e-7722-4dae-bb22-243099b47816",
+      "name": "merge attachments"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "={{ $json.attachments }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        576
+      ],
+      "id": "fa78c3d8-e94a-4ee6-92c5-6b3e4d4a0889",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.mycasavi.com/v2/authenticate",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n\"key\": \"e14c82a5-4f18-4263-8bff-b31f1ff8e21d\",\n\"secret\": \"13ba876a-1c01-44bf-810e-df085684c7e2\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        800,
+        960
+      ],
+      "id": "8d64337e-4d60-4076-b42b-16a5e78e45d8",
+      "name": "Casavi Access Token"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=dieses Tool enthält wertvolle Vertrags- und Zuordnungsregeln zur hausverwaltungsbuchhaltung und unternehmensbuchhaltung",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "2tkdMomK5tY5cbdE",
+          "mode": "list",
+          "cachedResultName": "Vertrags-/Zuordnungsregeln",
+          "cachedResultUrl": "/projects/BSyhBQ7yfPPEIdus/datatables/2tkdMomK5tY5cbdE"
+        },
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}"
+      },
+      "type": "n8n-nodes-base.dataTableTool",
+      "typeVersion": 1,
+      "position": [
+        1488,
+        1184
+      ],
+      "id": "a0f24911-36f5-46f3-b3b5-987190c63f4c",
+      "name": "Vertrags-/Zuordnungsregeln"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Dieses Tool holt greift auf eine Liste von Tickets aus casavi zu und verfügt über viele Informationen, welche aktuelle Vorgänge der Hausverwaltung dokumentiert",
+        "url": "https://api.mycasavi.com/v2/tickets",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $('Casavi Access Token').item.json.token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n\"_links\": {\n\"self\": \"https://api.mycasavi.com/v2/tickets?page=1\",\n\"next\": \"https://api.mycasavi.com/v2/tickets?page=2\",\n\"previous\": null\n},\n\"list\": [\n{}\n]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        1824,
+        1184
+      ],
+      "id": "afde5e74-4cb0-44e1-b084-73eb7107bd97",
+      "name": "get tickets"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "advanced": true,
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "=message_id",
+              "field2": "=id"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1104,
+        672
+      ],
+      "id": "1e65f0ed-828d-4acf-a7bb-d354c261e9c2",
+      "name": "Merge meta/pdf"
+    },
+    {
+      "parameters": {
+        "chatId": "=8481374711",
+        "text": "={{ $('E-Mail an rechnung@vorderegger.org').item.json.sender.emailAddress.name }} hat eine Mail an rechnung@vorderegger.org gesendet. Die Email konnte nicht klassifiziert werden, der WF wurde abgebrochen.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1872,
+        896
+      ],
+      "id": "dcc69b17-5384-4927-94f6-71ffc70d7fa3",
+      "name": "Send a text message",
+      "webhookId": "5ed60c65-3800-47a8-89a5-beb84fbd16ab",
+      "credentials": {
+        "telegramApi": {
+          "id": "zze9F3d0UIaHuZIp",
+          "name": "Telegram account | Assistentin"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.output.routing }}",
+                    "rightValue": "hausverwaltungsbuchhaltung",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "a10a6bd6-5851-4b93-abbd-675dae1b6bab"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Hausverwaltung"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "2eba3e53-84c7-47ce-b95d-183583d780ae",
+                    "leftValue": "={{ $json.output.routing }}",
+                    "rightValue": "unternehmensbuchhaltung",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Unternehmen"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "317eb821-3078-48c1-810a-8fe3e549ebef",
+                    "leftValue": "={{ $json.output.routing }}",
+                    "rightValue": "sonstiges Dokument",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "sonstiges Dokument"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        2288,
+        944
+      ],
+      "id": "4761c04b-48f5-4cfb-90bf-ca1f0fc82662",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "messageId": {
+          "__rl": true,
+          "value": "={{ $('Get message again').item.json.id }}",
+          "mode": "id"
+        },
+        "updateFields": {
+          "categories": [
+            "erledigt von WF",
+            "sonstiges Dokument"
+          ],
+          "isRead": true
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        2512,
+        1152
+      ],
+      "id": "f3fb5746-0c50-4041-8e60-add549b2e90d",
+      "name": "Kategorie \"sonstiges Dokument\"",
+      "webhookId": "c88fc3b5-2298-426c-a43e-67a1539eac17",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "fc8BvlRgUc8X6PFM",
+          "name": "Microsoft Outlook | rechnung@vorderegger.org"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "messageId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "AAMkADRmNDg4N2VkLTE1YzgtNDc3OS1hODEwLTkzNjRkODBlZjRhYgAuAAAAAADVfhWVs9n8Sqys2PgXYnSZAQD4Uc69Lf-WRq38dDz8P_ZtAAAF76oiAAA=",
+          "mode": "list",
+          "cachedResultName": "Posteingang - erledigt",
+          "cachedResultUrl": "https://outlook.office365.com/mail/AAMkADRmNDg4N2VkLTE1YzgtNDc3OS1hODEwLTkzNjRkODBlZjRhYgAuAAAAAADVfhWVs9n8Sqys2PgXYnSZAQD4Uc69Lf%2FWRq38dDz8P_ZtAAAF76oiAAA%3D"
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        2960,
+        960
+      ],
+      "id": "c6b19f8d-3952-42e3-bf84-9c49ee87f001",
+      "name": "move to 'Posteingang erledigt'",
+      "webhookId": "f6c73801-a386-4d70-9ff8-494cebe74fde",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "fc8BvlRgUc8X6PFM",
+          "name": "Microsoft Outlook | rechnung@vorderegger.org"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2736,
+        960
+      ],
+      "id": "b7cda985-e90d-403b-b54b-ecce5a54fd0c",
+      "name": "Wait",
+      "webhookId": "675a83a8-81f7-45cb-9d7a-7a8cad665f49"
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "={{ $json.attachments }}",
+        "name": "={{ $json.attachments_metadata.fileName }}",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1-Jz38ZxVplDLZ5Xtb_xDC93gsGonggWY",
+          "mode": "list",
+          "cachedResultName": "Rechnungen",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1-Jz38ZxVplDLZ5Xtb_xDC93gsGonggWY"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1648,
+        752
+      ],
+      "id": "047bf93f-8408-46de-86fa-95b00d4ee5a6",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "mnrJroOuHjL2oVBt",
+          "name": "Google Drive | fabian.vorderegger@vo-immobilien.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Upload file').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1uYnkWl51_RdQ2Ncy1pZOF-sP_GmfvOZF",
+          "mode": "list",
+          "cachedResultName": "Hausverwaltung",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1uYnkWl51_RdQ2Ncy1pZOF-sP_GmfvOZF"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2960,
+        768
+      ],
+      "id": "cdf4f294-2a4c-466e-9a24-f31359365711",
+      "name": "Move file to HV",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "mnrJroOuHjL2oVBt",
+          "name": "Google Drive | fabian.vorderegger@vo-immobilien.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Upload file').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1Ba3armAG5eJM1P_E3tYeyRqYUr1YMhaG",
+          "mode": "list",
+          "cachedResultName": "Unternehmen",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1Ba3armAG5eJM1P_E3tYeyRqYUr1YMhaG"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2960,
+        1184
+      ],
+      "id": "14b71cab-034d-456a-aead-e237c92f210e",
+      "name": "Move file to Unternehmen",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "mnrJroOuHjL2oVBt",
+          "name": "Google Drive | fabian.vorderegger@vo-immobilien.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "=8481374711",
+        "text": "={{ $('E-Mail an rechnung@vorderegger.org').item.json.sender.emailAddress.name }} hat eine Mail an rechnung@vorderegger.org gesendet. Die Rechnung konnte nicht in den vorgesehenen Ordnern abgelegt werden. Bitte händisch eingreifen.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3616,
+        2624
+      ],
+      "id": "33265611-9bb6-47b6-96a9-383a4bc254c0",
+      "name": "Send text, keine Zuweisung zu Unternehmen",
+      "webhookId": "dcc99417-c864-408f-a3f1-ae06af80e615",
+      "credentials": {
+        "telegramApi": {
+          "id": "zze9F3d0UIaHuZIp",
+          "name": "Telegram account | Assistentin"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Upload file').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1SAYvexr05zaXiIhwEzNjSIupyYzIXJVe",
+          "mode": "list",
+          "cachedResultName": "200000 VZ Immo Invest GmbH",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1SAYvexr05zaXiIhwEzNjSIupyYzIXJVe"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3616,
+        -48
+      ],
+      "id": "26260f1e-331d-4a99-8574-da7bba4163b1",
+      "name": "Move 200000 VZ Immo Invest GmbH",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "mnrJroOuHjL2oVBt",
+          "name": "Google Drive | fabian.vorderegger@vo-immobilien.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Upload file').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1rT1AiKT5txOD2r6lUdvIJQQGPwc1NM2q",
+          "mode": "list",
+          "cachedResultName": "209600 das Salz GmbH",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1rT1AiKT5txOD2r6lUdvIJQQGPwc1NM2q"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3616,
+        96
+      ],
+      "id": "8921856c-68b4-4e1f-a719-57e463afae17",
+      "name": "209600 das Salz GmbH",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "mnrJroOuHjL2oVBt",
+          "name": "Google Drive | fabian.vorderegger@vo-immobilien.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Upload file').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1wuTsZNoRSkdM6BKthnwmbJmANhtRyNb4",
+          "mode": "list",
+          "cachedResultName": "213033 VO Lehen Immobilien GmbH",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1wuTsZNoRSkdM6BKthnwmbJmANhtRyNb4"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3616,
+        256
+      ],
+      "id": "c8d3a91d-499e-4f5d-a3d9-00bb65580efb",
+      "name": "213033 VO Lehen Immobilien GmbH",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "mnrJroOuHjL2oVBt",
+          "name": "Google Drive | fabian.vorderegger@vo-immobilien.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Upload file').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1XPJ_LQgJDJIPFDtunFFU4ZnOUVlswp68",
+          "mode": "list",
+          "cachedResultName": "220030 VO Verwaltung GmbH",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1XPJ_LQgJDJIPFDtunFFU4ZnOUVlswp68"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3616,
+        400
+      ],
+      "id": "b7e7dadd-da32-451f-b433-22fd8ab4b777",
+      "name": "220030 VO Verwaltung GmbH",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "mnrJroOuHjL2oVBt",
+          "name": "Google Drive | fabian.vorderegger@vo-immobilien.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('insert row in \"Rechnungen\"').item.json.to }}",
+                    "rightValue": "VZ Immo Invest GmbH",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "9b7fae86-440e-491a-8c1e-79a26588a772"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "VZ Immo Invest"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ad8feed9-1327-42e2-b6fc-4a500911c56c",
+                    "leftValue": "={{ $('insert row in \"Rechnungen\"').item.json.to }}",
+                    "rightValue": "das Salz GmbH",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "das Salz"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b393cb15-18a8-4978-bb6c-8a67c7ef145e",
+                    "leftValue": "={{ $('insert row in \"Rechnungen\"').item.json.to }}",
+                    "rightValue": "VO Lehen Immobilien GmbH",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "VO Lehen Immobilien"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "326f0128-0b6d-4d36-a21d-a97163fcad44",
+                    "leftValue": "={{ $('insert row in \"Rechnungen\"').item.json.to }}",
+                    "rightValue": "VO Verwaltung GmbH",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "VO Verwaltung"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "860def23-d22a-418c-8dec-2de6376a6747",
+                    "leftValue": "={{ $('insert row in \"Rechnungen\"').item.json.to }}",
+                    "rightValue": "Vorderegger Developments GmbH",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Vorderegger Developments"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "0058663b-6678-4318-9158-eda34f26dfe3",
+                    "leftValue": "={{ $('insert row in \"Rechnungen\"').item.json.to }}",
+                    "rightValue": "Vorest Vermögensverwaltung GmbH",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Vorest Vermögensverwaltung"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3ab72a91-4c6a-41a1-ad2a-150042bec014",
+                    "leftValue": "={{ $('insert row in \"Rechnungen\"').item.json.to }}",
+                    "rightValue": "Aupoint Liegenschaftsverwaltungs GmbH",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Aupoint Liegenschaftsverwaltung"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "aaa96fe9-02c8-4c7f-a3df-40b711cdef77",
+                    "leftValue": "={{ $('insert row in \"Rechnungen\"').item.json.to }}",
+                    "rightValue": "Fürstenbrunn Projekt GmbH",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Fürstenbrunn Projekt"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "2a99dd18-c192-49ca-a16d-e2e99ad1e416",
+                    "leftValue": "={{ $('insert row in \"Rechnungen\"').item.json.to }}",
+                    "rightValue": "VO & RMI Immobilien GmbH",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "VO & RMI Immobilien"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ce2bbeea-0fa0-4479-af8b-46ae2fa944d5",
+                    "leftValue": "={{ $('insert row in \"Rechnungen\"').item.json.to }}",
+                    "rightValue": "B1 Immobilien GmbH",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "B1 Immobilien"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "5f92fa2f-6d0e-4cf4-85ee-7c13ce721d3f",
+                    "leftValue": "={{ $('insert row in \"Rechnungen\"').item.json.to }}",
+                    "rightValue": "STROVORD GmbH",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "STROVORD"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "8e98ea74-4444-406a-8044-19f9ef64982f",
+                    "leftValue": "={{ $('insert row in \"Rechnungen\"').item.json.to }}",
+                    "rightValue": "VO Immo GmbH",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "VO Immo"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "93621960-1e2e-4514-910e-6cf9d67d32a1",
+                    "leftValue": "={{ $('insert row in \"Rechnungen\"').item.json.to }}",
+                    "rightValue": "VORSA Developments GmbH",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "VORSA Developments"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "928c25da-a8fa-4757-a219-90a033caddf9",
+                    "leftValue": "={{ $('insert row in \"Rechnungen\"').item.json.to }}",
+                    "rightValue": "Haidaways GmbH",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Haidaways"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "7a0249fe-beea-4213-bd49-804058ccc7c8",
+                    "leftValue": "={{ $('insert row in \"Rechnungen\"').item.json.to }}",
+                    "rightValue": "Ceroskopia Invest GmbH & Co KG",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Ceroskopia Invest GmbH & Co KG"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "0a56d0f6-cc94-460f-a20b-bf8fe4600558",
+                    "leftValue": "={{ $('insert row in \"Rechnungen\"').item.json.to }}",
+                    "rightValue": "LG 9 Projekt GmbH",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "LG 9 Projekt"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "370c2b19-0373-4407-a477-dbda3c42ad89",
+                    "leftValue": "={{ $('insert row in \"Rechnungen\"').item.json.to }}",
+                    "rightValue": "Wagrain Wohnen GmbH",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Wagrain Wohnen"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "cae2d553-fd2e-4bea-b9e1-96c26368367a",
+                    "leftValue": "={{ $('insert row in \"Rechnungen\"').item.json.to }}",
+                    "rightValue": "MMR GmbH",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "MMR"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "54b29233-a873-46a2-bdcb-c24545c3d4e7",
+                    "leftValue": "={{ $('insert row in \"Rechnungen\"').item.json.to }}",
+                    "rightValue": "VO Holding GmbH",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "VO Holding"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "f7461ca4-72ea-4a19-8b17-6ce2deeb645b",
+                    "leftValue": "={{ $('insert row in \"Rechnungen\"').item.json.to }}",
+                    "rightValue": "VO Baumanagement GmbH",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "VO Baumanagement"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "37f2d595-26c1-4ad4-b678-d30c3d01b56a",
+                    "leftValue": "={{ $('insert row in \"Rechnungen\"').item.json.to }}",
+                    "rightValue": "LFM Bau GmbH",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "LFM Bau"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        3200,
+        864
+      ],
+      "id": "42987620-60d2-4f9c-94de-1e5ad8e4d296",
+      "name": "Zuweisung zu Unternehmen"
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Upload file').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1uIVBYlHsZYT-5TImLspuMYGGdOn4bTRW",
+          "mode": "list",
+          "cachedResultName": "209615 VO Holding GmbH",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1uIVBYlHsZYT-5TImLspuMYGGdOn4bTRW"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3616,
+        2080
+      ],
+      "id": "af442ca5-6cac-49cc-8a80-b95a44daeac7",
+      "name": "209615 VO Holding GmbH",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "mnrJroOuHjL2oVBt",
+          "name": "Google Drive | fabian.vorderegger@vo-immobilien.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Upload file').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "121WuJHupIGwwkFM50CMysqv1PfX4-pue",
+          "mode": "list",
+          "cachedResultName": "220032 Vorderegger Developments GmbH",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/121WuJHupIGwwkFM50CMysqv1PfX4-pue"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3616,
+        544
+      ],
+      "id": "3cc8d96b-4796-4382-abe2-133846006db5",
+      "name": "220032 Vorderegger Developments GmbH",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "mnrJroOuHjL2oVBt",
+          "name": "Google Drive | fabian.vorderegger@vo-immobilien.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Upload file').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1dAJfnki_usfCaGiL17n7KEckIIr2FYil",
+          "mode": "list",
+          "cachedResultName": "224012 Vorest Vermögensverwaltung GmbH",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1dAJfnki_usfCaGiL17n7KEckIIr2FYil"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3616,
+        688
+      ],
+      "id": "8300e40d-2ef1-481b-b2df-4961139baef7",
+      "name": "224012 Vorest Vermögensverwaltung GmbH",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "mnrJroOuHjL2oVBt",
+          "name": "Google Drive | fabian.vorderegger@vo-immobilien.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Upload file').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1Co1DAvUKVmOHktCXTdJWfz1KaM-aN_L-",
+          "mode": "list",
+          "cachedResultName": "224014 Aupoint Liegenschaftsverwaltungs GmbH",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1Co1DAvUKVmOHktCXTdJWfz1KaM-aN_L-"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3776,
+        784
+      ],
+      "id": "b67d0ca2-0273-4e63-aabe-39eed237853b",
+      "name": "224014 Aupoint Liegenschaftsverwaltungs GmbH",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "mnrJroOuHjL2oVBt",
+          "name": "Google Drive | fabian.vorderegger@vo-immobilien.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Upload file').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "13sGnP0XUV1S9X8fi4x1EMyZdoN6G8qC-",
+          "mode": "list",
+          "cachedResultName": "224017 Fürstenbrunn Projekt GmbH",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/13sGnP0XUV1S9X8fi4x1EMyZdoN6G8qC-"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3616,
+        896
+      ],
+      "id": "ac27db1a-3888-48f6-8112-0c4a811b5479",
+      "name": "224017 Fürstenbrunn Projekt GmbH",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "mnrJroOuHjL2oVBt",
+          "name": "Google Drive | fabian.vorderegger@vo-immobilien.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Upload file').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1cbalzViqBtFp-XsXQLAZghTD1R4rvPN-",
+          "mode": "list",
+          "cachedResultName": "224019 VO & RMI Immobilien GmbH",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1cbalzViqBtFp-XsXQLAZghTD1R4rvPN-"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3776,
+        976
+      ],
+      "id": "ee7f396d-84ba-481f-9978-c942554db768",
+      "name": "224019 VO & RMI Immobilien GmbH",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "mnrJroOuHjL2oVBt",
+          "name": "Google Drive | fabian.vorderegger@vo-immobilien.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Upload file').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1vSMPrvDXHKABYO7N24awNSY8gqZHYNGl",
+          "mode": "list",
+          "cachedResultName": "224020 B1 Immobilien GmbH",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1vSMPrvDXHKABYO7N24awNSY8gqZHYNGl"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3616,
+        1072
+      ],
+      "id": "35376cda-38a6-4e2c-8483-a4b0f9c27268",
+      "name": "224020 B1 Immobilien GmbH",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "mnrJroOuHjL2oVBt",
+          "name": "Google Drive | fabian.vorderegger@vo-immobilien.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Upload file').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "14Qwy1mBuMn1dVxM-Dniu_LUtH0p3ZdY8",
+          "mode": "list",
+          "cachedResultName": "224021 STROVORD GmbH",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/14Qwy1mBuMn1dVxM-Dniu_LUtH0p3ZdY8"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3776,
+        1168
+      ],
+      "id": "7b7efb80-c68d-49b1-bbe2-bccf029e6d8e",
+      "name": "224021 STROVORD GmbH",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "mnrJroOuHjL2oVBt",
+          "name": "Google Drive | fabian.vorderegger@vo-immobilien.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Upload file').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1mzXJpsGW6trWVWNWTsanWHHzH_nGhMcz",
+          "mode": "list",
+          "cachedResultName": "224022 VO Immo GmbH",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1mzXJpsGW6trWVWNWTsanWHHzH_nGhMcz"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3616,
+        1264
+      ],
+      "id": "eeedac35-15d6-4eba-9a67-9b7341d68db9",
+      "name": "224022 VO Immo GmbH",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "mnrJroOuHjL2oVBt",
+          "name": "Google Drive | fabian.vorderegger@vo-immobilien.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Upload file').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1b8CI3YR9bZodH7ceiizI7mjIHXk2Q-CU",
+          "mode": "list",
+          "cachedResultName": "224024 VORSA Developments GmbH",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1b8CI3YR9bZodH7ceiizI7mjIHXk2Q-CU"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3776,
+        1360
+      ],
+      "id": "848a918b-f257-4e00-b19d-11aa51090e77",
+      "name": "224024 VORSA Developments GmbH",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "mnrJroOuHjL2oVBt",
+          "name": "Google Drive | fabian.vorderegger@vo-immobilien.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Upload file').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1hNe-CzXB-xPATZEPj_Oea9VDmaYE-Und",
+          "mode": "list",
+          "cachedResultName": "231062 Haidaways GmbH",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1hNe-CzXB-xPATZEPj_Oea9VDmaYE-Und"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3616,
+        1472
+      ],
+      "id": "4d7bdb27-7e68-4613-b06c-b6054ba0b7aa",
+      "name": "231062 Haidaways GmbH",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "mnrJroOuHjL2oVBt",
+          "name": "Google Drive | fabian.vorderegger@vo-immobilien.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Upload file').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1jfShq99DnSvZKHUnbFNej7JqbY7xRtYo",
+          "mode": "list",
+          "cachedResultName": "231064 Ceroskopia Invest GmbH & Co KG",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1jfShq99DnSvZKHUnbFNej7JqbY7xRtYo"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3776,
+        1584
+      ],
+      "id": "0a1b9dc5-2a57-4195-93d7-d2a3e1547cfb",
+      "name": "231064 Ceroskopia Invest GmbH & Co KG",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "mnrJroOuHjL2oVBt",
+          "name": "Google Drive | fabian.vorderegger@vo-immobilien.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Upload file').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1kfC_0uk73tSRTNcrHcJ__wV3d0vHs8DH",
+          "mode": "list",
+          "cachedResultName": "231065 LG 9 Projekt GmbH",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1kfC_0uk73tSRTNcrHcJ__wV3d0vHs8DH"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3616,
+        1680
+      ],
+      "id": "905d9db0-492e-426f-964b-8c0d97214c45",
+      "name": "231065 LG 9 Projekt GmbH",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "mnrJroOuHjL2oVBt",
+          "name": "Google Drive | fabian.vorderegger@vo-immobilien.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Upload file').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1jzhr5fs1oTwIOYcBnpBd7XBw2bhOGxG2",
+          "mode": "list",
+          "cachedResultName": "231066 Wagrain Wohnen GmbH",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1jzhr5fs1oTwIOYcBnpBd7XBw2bhOGxG2"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3776,
+        1808
+      ],
+      "id": "7f5a986c-cd9f-40eb-bf15-01664557ce75",
+      "name": "231066 Wagrain Wohnen GmbH",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "mnrJroOuHjL2oVBt",
+          "name": "Google Drive | fabian.vorderegger@vo-immobilien.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Upload file').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1u_d3vvyX0qCF23faL72l1fLLvtveqlxH",
+          "mode": "list",
+          "cachedResultName": "231068 MMR GmbH",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1u_d3vvyX0qCF23faL72l1fLLvtveqlxH"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3616,
+        1904
+      ],
+      "id": "ecbe0f91-03e0-434a-a38e-64c8d2a69428",
+      "name": "231068 MMR GmbH",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "mnrJroOuHjL2oVBt",
+          "name": "Google Drive | fabian.vorderegger@vo-immobilien.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Upload file').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1Mff--fxQEHgZZqeyXKXDPqCpZ-YmT9p4",
+          "mode": "list",
+          "cachedResultName": "224025 VO Baumanagement GmbH",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1Mff--fxQEHgZZqeyXKXDPqCpZ-YmT9p4"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3616,
+        2272
+      ],
+      "id": "eb942cfa-87f9-451f-a469-ac92f9cada82",
+      "name": "224025 VO Baumanagement GmbH",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "mnrJroOuHjL2oVBt",
+          "name": "Google Drive | fabian.vorderegger@vo-immobilien.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Upload file').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1uhgLA_5OYo6ACwl768k35zPW_MHC2FvU",
+          "mode": "list",
+          "cachedResultName": "230971 LFM Bau GmbH",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1uhgLA_5OYo6ACwl768k35zPW_MHC2FvU"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3616,
+        2448
+      ],
+      "id": "e2fd5b53-703d-434f-88e4-ad86b988e860",
+      "name": "230971 LFM Bau GmbH",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "mnrJroOuHjL2oVBt",
+          "name": "Google Drive | fabian.vorderegger@vo-immobilien.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "11448c9f-39da-47ce-b173-362811db4dde",
+              "leftValue": "={{ $json.attachments_metadata.fileExtension }}",
+              "rightValue": "PDF",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "a493ed4b-03dd-41ed-8e4c-e812f6557ffb",
+              "leftValue": "={{ $json.attachments_metadata.fileExtension }}",
+              "rightValue": "XML",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        944,
+        592
+      ],
+      "id": "2fc8e32c-af32-4f81-b395-ff1b4a026ecd",
+      "name": "only PDF/XML"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        32,
+        128
+      ],
+      "id": "13c598d4-6f13-43ec-8b64-46fa55b48025",
+      "name": "Manual trigger (test)"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.routing }}",
+                    "rightValue": "hausverwaltungsbuchhaltung",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "56b92899-f081-4d7b-ad27-d3c770245be7"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "hausverwaltung_success"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "fc59578b-bc1b-423d-a4ca-1c502ce29b90",
+                    "leftValue": "={{ $json.routing }}",
+                    "rightValue": "unternehmensbuchhaltung",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "unternehmen_success"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        1808,
+        960
+      ],
+      "id": "ff78938d-857c-4fe7-9a51-ea3c1d401f35",
+      "name": "Switch3"
+    },
+    {
+      "parameters": {
+        "chatId": "8481374711",
+        "text": "=🚨 P7M FILE DETECTED  From: {{ $json.original_sender }} Subject: {{ $json.original_subject }} Files: {{ $json.p7m_files.join(', ') }}  Workflow skipped p7m processing. Manual intervention required.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        768,
+        432
+      ],
+      "id": "b85075d5-e9fa-4aa3-bdd5-c9c87b10bf80",
+      "name": "🚨 P7M FILE DETECTED",
+      "webhookId": "bd603023-a04c-413a-9758-2b73fee32fb6",
+      "credentials": {
+        "telegramApi": {
+          "id": "zze9F3d0UIaHuZIp",
+          "name": "Telegram account | Assistentin"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "8481374711",
+        "text": "=📄 PDF EXTRACTION FAILED\n\nFrom: {{ $json.original_sender }}\nSubject: {{ $json.original_subject }}\n\nCould not extract text from PDF. Manual processing required.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2080,
+        560
+      ],
+      "id": "a2250acb-0c50-453c-b282-4b0d0cf6d8d2",
+      "name": "🚨 PDF EXTRACTION FAILED",
+      "webhookId": "bd603023-a04c-413a-9758-2b73fee32fb6",
+      "credentials": {
+        "telegramApi": {
+          "id": "zze9F3d0UIaHuZIp",
+          "name": "Telegram account | Assistentin"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nconst processed = items.map(item => {\n  try {\n    const parsedOutput = JSON.parse(item.json.output);\n    return {\n      json: {\n        ...item.json,\n        parsed_output: parsedOutput,\n        routing: parsedOutput.routing,\n        confidence: parsedOutput.confidence,\n        reason: parsedOutput.reason_short\n      }\n    };\n  } catch (error) {\n    return {\n      json: {\n        ...item.json,\n        error: \"Failed to parse AI output\",\n        routing: \"error\"\n      }\n    };\n  }\n});\n\nreturn processed;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1632,
+        960
+      ],
+      "id": "e4d9287f-eb67-4812-b81d-51a6b4979a72",
+      "name": "Parse the output"
+    },
+    {
+      "parameters": {
+        "chatId": "8481374711",
+        "text": "=🎫 CASABI TICKET FAILED\n\nRouting: {{ $input.item.json.routing }}\nReason: {{ $input.item.json.reason }}\n\nManual ticket creation required in Casavi.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2032,
+        1360
+      ],
+      "id": "3799f76b-f07c-46f3-a8f6-7c5426b04606",
+      "name": "🚨 CASAVI TICKET FAILED",
+      "webhookId": "bd603023-a04c-413a-9758-2b73fee32fb6",
+      "credentials": {
+        "telegramApi": {
+          "id": "zze9F3d0UIaHuZIp",
+          "name": "Telegram account | Assistentin"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.token }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "03ac4261-b78d-4adb-be63-4e4c4470654f"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        1024,
+        960
+      ],
+      "id": "685218b9-1db7-41d7-8c96-53f87bd6a2b4",
+      "name": "Casavi token?"
+    },
+    {
+      "parameters": {
+        "chatId": "8481374711",
+        "text": "=🔐 CASAVI AUTH FAILED\n\nFailed to authenticate with Casavi API.\n\nCheck API credentials and service status.\nManual intervention required.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1280,
+        1344
+      ],
+      "id": "c4c781cd-eb1d-400b-81b0-111619ea5206",
+      "name": "🔐 CASAVI AUTH FAILED",
+      "webhookId": "bd603023-a04c-413a-9758-2b73fee32fb6",
+      "credentials": {
+        "telegramApi": {
+          "id": "zze9F3d0UIaHuZIp",
+          "name": "Telegram account | Assistentin"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "2d7c0a05-1e22-4013-8c68-3b6772770c83"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        1824,
+        752
+      ],
+      "id": "1be91106-75ed-4593-98f9-d9b6a4cecb70",
+      "name": "File exists?"
+    },
+    {
+      "parameters": {
+        "chatId": "8481374711",
+        "text": "=☁️ GOOGLE DRIVE UPLOAD FAILED\n\nFile: {{ $json.attachments_metadata.fileName }}\nFrom: {{ $json.original_sender }}\n\nFile upload to Google Drive failed. Manual upload required.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2080,
+        384
+      ],
+      "id": "c05252b5-8776-49ce-8917-642b489b3c49",
+      "name": "☁️ GOOGLE DRIVE UPLOAD FAILED",
+      "webhookId": "bd603023-a04c-413a-9758-2b73fee32fb6",
+      "credentials": {
+        "telegramApi": {
+          "id": "zze9F3d0UIaHuZIp",
+          "name": "Telegram account | Assistentin"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nconst processed = items.map(item => {\n  const pdfText = item.json.text || '';\n  \n  // Check for common XML invoice patterns\n  const hasXML = pdfText.includes('<?xml') || \n                 pdfText.includes('<rsm:CrossIndustryInvoice') ||\n                 pdfText.includes('<ubl:Invoice') ||\n                 pdfText.includes('<qdt:ApplicableHeaderTradeSettlement');\n  \n  return {\n    json: {\n      ...item.json,\n      has_xml: hasXML,\n      xml_content: hasXML ? extractXMLFromText(pdfText) : null\n    }\n  };\n});\n\n// Helper function to extract XML\nfunction extractXMLFromText(text) {\n  const xmlStart = text.indexOf('<?xml');\n  if (xmlStart === -1) return null;\n  \n  // Extract everything from <?xml to the last > (simple approach)\n  const xmlEnd = text.indexOf('</Invoice>', xmlStart);\n  if (xmlEnd === -1) return null;\n  \n  return text.substring(xmlStart, xmlEnd + 10); // +10 for </Invoice>\n}\n\nreturn processed;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1456,
+        576
+      ],
+      "id": "c9eb431b-87bc-4347-99ca-61012c1f319e",
+      "name": "XML detection"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.has_xml }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "ab0145a8-2595-4c70-b0f9-674121500d48"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        1648,
+        576
+      ],
+      "id": "b015c2f0-a6f4-43ac-8048-3d5493b53144",
+      "name": "has XML?"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\n// Helper function - MUST be inside the same node\nfunction extractXMLValue(xml, fieldNames) {\n  if (!xml) return null;\n  \n  for (let field of fieldNames) {\n    const regex = new RegExp(`<${field}>([^<]+)</${field}>`, 'i');\n    const match = xml.match(regex);\n    if (match && match[1]) return match[1].trim();\n  }\n  return null;\n}\n\nconst processed = items.map(item => {\n  try {\n    const xmlContent = item.json.xml_content;\n    \n    // Extract values from XML\n    const extractedData = {\n      from: extractXMLValue(xmlContent, ['SellerName', 'Supplier', 'AccountingSupplierParty']),\n      date: extractXMLValue(xmlContent, ['IssueDate', 'DateTime', 'TaxPointDate']),\n      invoice_number: extractXMLValue(xmlContent, ['InvoiceNumber', 'ID', 'DocumentID']),\n      Total: extractXMLValue(xmlContent, ['TaxInclusiveAmount', 'GrandTotal', 'LineTotalAmount']),\n      currency: extractXMLValue(xmlContent, ['Currency', 'DocumentCurrency']) || 'EUR',\n    };\n    \n    // Ensure ALL DataTable fields are present (even if empty)\n    const invoiceData = {\n      from: extractedData.from || \"\",\n      date: extractedData.date || \"\",\n      to: \"VO Verwaltung GmbH\",\n      service_provided: \"XML-extracted service\",\n      invoice_number: extractedData.invoice_number || \"\",\n      property: \"\",\n      Total: extractedData.Total || \"\",\n      IBAN: \"\",\n      UID: \"\",\n      KundNr: \"\",\n      currency: extractedData.currency || \"EUR\"\n    };\n    \n    return {\n      json: {\n        ...item.json,\n        message: {\n          content: {\n            date: invoiceData.date || \"\",\n            invoice_number: invoiceData.invoice_number || \"\",\n            invoice_issuer: invoiceData.from || \"\",\n            \"Client Name\": invoiceData.to || \"VO Verwaltung GmbH\",\n            property: invoiceData.property || \"\",\n            service_provided: invoiceData.service_provided || \"XML-extracted service\",\n            UID: invoiceData.UID || \"\",\n            IBAN: invoiceData.IBAN || \"\",\n            KundNr: invoiceData.KundNr || \"\",\n            Total: invoiceData.Total || \"\"\n          }\n        },\n        data_source: 'xml',\n        xml_parsing_attempted: true,\n        xml_fields_found: Object.keys(extractedData).filter(k => extractedData[k] && extractedData[k] !== \"\").length\n      }\n    };\n    \n  } catch (error) {\n    // Fallback with all required fields in message.content structure\n    return {\n      json: {\n        ...item.json,\n        message: {\n          content: {\n            date: \"\",\n            invoice_number: \"\",\n            invoice_issuer: \"\",\n            \"Client Name\": \"VO Verwaltung GmbH\",\n            property: \"\",\n            service_provided: \"XML-extracted service\",\n            UID: \"\",\n            IBAN: \"\",\n            KundNr: \"\",\n            Total: \"\"\n          }\n        },\n        data_source: 'xml',\n        xml_parsing_attempted: false,\n        xml_parsing_error: error.message\n      }\n    };\n  }\n});\n\nreturn processed;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1824,
+        384
+      ],
+      "id": "76dfa44f-d272-4b08-a2d1-cb74ce053ea6",
+      "name": "XML Parser"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "6d38102f-abe2-403b-b34a-5ed13ceaad81",
+                    "leftValue": "={{ $json.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "empty",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        1840,
+        576
+      ],
+      "id": "38459947-4896-484d-970c-fc407303056e",
+      "name": "has text?"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nconst processed = items.map(item => {\n  const attachments = item.json.attachments_metadata || [];\n  \n  // Look for Rechnung + Beilage patterns\n  const rechnungFiles = attachments.filter(att => \n    att.fileName && (\n      att.fileName.toLowerCase().includes('rechnung') ||\n      att.fileName.match(/rg\\.?\\s*\\d+/i) ||\n      att.fileName.match(/rechnung\\s*\\d+/i)\n    )\n  );\n  \n  const beilageFiles = attachments.filter(att =>\n    att.fileName && (\n      att.fileName.toLowerCase().includes('beilage') ||\n      att.fileName.match(/beilage\\s*rg\\.?\\s*\\d+/i)\n    )\n  );\n  \n  const hasInvoiceBeilagePair = rechnungFiles.length > 0 && beilageFiles.length > 0;\n  \n  return {\n    json: {\n      ...item.json,\n      has_invoice_beilage: hasInvoiceBeilagePair,\n      rechnung_files: rechnungFiles.map(f => f.fileName),\n      beilage_files: beilageFiles.map(f => f.fileName),\n      total_attachments: attachments.length,\n      needs_pdf_merging: hasInvoiceBeilagePair\n    }\n  };\n});\n\nreturn processed;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        752
+      ],
+      "id": "ec96f5e6-536e-41fe-a6b0-0e60589772d3",
+      "name": "Invoice+Beilage detection"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "f3948021-5353-42e6-b6d5-58c39ad6b83d",
+                    "leftValue": "={{ $json.has_p7m }}",
+                    "rightValue": "=true",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        592,
+        432
+      ],
+      "id": "efa702b7-3a25-4f91-8bd5-2c569c3b5727",
+      "name": "has p7m?"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Check for p7m files in merged attachments\nconst items = $input.all();\n\nlet hasP7m = false;\nlet p7mFileNames = [];\n\nitems.forEach(item => {\n  const fileName = item.json.attachments_metadata?.fileName || '';\n  const fileExtension = item.json.attachments_metadata?.fileExtension || '';\n  \n  if (fileExtension.toLowerCase() === 'p7m' || fileName.toLowerCase().endsWith('.p7m')) {\n    hasP7m = true;\n    p7mFileNames.push(fileName);\n  }\n});\n\n// If p7m files found, create special output\nif (hasP7m) {\n  return [{ \n    json: {\n      has_p7m: true,\n      p7m_files: p7mFileNames,\n      p7m_count: p7mFileNames.length,\n      message: 'Found p7m files - manual processing required',\n      original_subject: items[0].json.subject,\n      original_sender: items[0].json.sender?.emailAddress?.name,\n      original_message_id: items[0].json.id\n    }\n  }];\n}\n\n// No p7m files found, pass through all data unchanged\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        432
+      ],
+      "id": "03bcad58-89a5-4c0e-b4b4-85a9a805df60",
+      "name": "p7m Files detection"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.needs_pdf_merging }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "335dfea8-0272-423f-bf31-9d0f3b6b360a"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        800,
+        752
+      ],
+      "id": "b57a2877-b164-4526-8553-4b9dfb6d7fad",
+      "name": "needs_pdf_merging?"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nconsole.log('=== extract_binary_files START ===');\nconsole.log('Input has binary?', !!items[0].binary);\n\nconst processed = items.map(item => {\n  const attachments = item.json.attachments_metadata || [];\n  const binaryData = item.binary || {};\n  \n  // Get the filenames identified by previous node\n  const invoiceFilename = item.json.invoice_filename || item.json.rechnung_files?.[0];\n  const supplementFilename = item.json.supplement_filename || item.json.beilage_files?.[0];\n  \n  console.log('Looking for invoice:', invoiceFilename);\n  console.log('Looking for supplement:', supplementFilename);\n  console.log('Available binaries:', Object.keys(binaryData));\n  \n  let invoiceBinary = null;\n  let supplementBinary = null;\n  \n  // Find matching binaries\n  Object.entries(binaryData).forEach(([key, value]) => {\n    console.log(`Checking ${key}: ${value.fileName}`);\n    if (value.fileName === invoiceFilename) {\n      invoiceBinary = value;\n      console.log('✅ Found invoice match!');\n    }\n    if (value.fileName === supplementFilename) {\n      supplementBinary = value;\n      console.log('✅ Found supplement match!');\n    }\n  });\n  \n  console.log('Invoice binary found?', !!invoiceBinary);\n  console.log('Supplement binary found?', !!supplementBinary);\n  \n  const result = {\n    json: {\n      ...item.json,\n      invoice_binary_found: !!invoiceBinary,\n      supplement_binary_found: !!supplementBinary,\n      invoice_name: invoiceFilename || 'invoice.pdf',\n      supplement_name: supplementFilename || 'supplement.pdf'\n    },\n    binary: {\n      ...(invoiceBinary && { invoice: invoiceBinary }),\n      ...(supplementBinary && { supplement: supplementBinary })\n    }\n  };\n  \n  console.log('Output binary keys:', Object.keys(result.binary));\n  console.log('=== extract_binary_files END ===');\n  \n  return result;\n});\n\nreturn processed;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1008,
+        784
+      ],
+      "id": "2ebb699d-fcae-41ad-8671-3fe395820139",
+      "name": "extract_binary_files"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{\n  json: {\n    test_mode: true,\n    invoice_url: \"https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf\",\n    invoice_name: \"test_invoice.pdf\",\n    supplement_url: \"https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf\",\n    supplement_name: \"test_supplement.pdf\",\n    request_id: \"test\"\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        272,
+        128
+      ],
+      "id": "42e8dca0-2b85-437a-9800-596da963c84b",
+      "name": "test data for merge subworkflow"
+    },
+    {
+      "parameters": {
+        "content": "## Error \n**here I receive an error when trying to move a pdf/xml inoice from our own group",
+        "height": 208,
+        "width": 304
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        448,
+        656
+      ],
+      "typeVersion": 1,
+      "id": "c5c8a47a-ebc4-47d4-9850-76a2d4bab39c",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "lH3IcHml8ugtJDcl",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/lH3IcHml8ugtJDcl",
+          "cachedResultName": "PDF Merge"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        512,
+        128
+      ],
+      "id": "74c44b89-340d-4c2a-a88d-5372b807898d",
+      "name": "Call 'PDF Merge'"
+    },
+    {
+      "parameters": {
+        "content": "## The call of subflow worked!",
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        96,
+        -64
+      ],
+      "id": "670f08d2-687d-49e6-961b-9795af67503d",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b7daaa3a-41a7-41b8-bcc3-cd8584e2cec3",
+              "leftValue": "=invoice_binary_found",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "d655b7dc-5ddd-4cb7-9d88-96351a008de0",
+              "leftValue": "=supplement_binary_found",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1200,
+        784
+      ],
+      "id": "8f98680a-e183-4f0a-afa8-0d85a6a3fbf5",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Choose ONE test scenario by commenting/uncommenting:\n\n// TEST 1: URLs (known to work)\nreturn [{\n  json: {\n    // Simulate email metadata\n    subject: \"TEST: Invoice 123\",\n    sender: { emailAddress: { name: \"Test Sender\" } },\n    id: \"test-id-123\",\n    \n    // Your node looks for these:\n    invoice_filename: \"test_invoice.pdf\",\n    supplement_filename: \"test_supplement.pdf\",\n    rechnung_files: [\"test_invoice.pdf\"],\n    beilage_files: [\"test_supplement.pdf\"],\n    attachments_metadata: [\n      { fileName: \"test_invoice.pdf\" },\n      { fileName: \"test_supplement.pdf\" }\n    ],\n    \n    // Debug flags\n    is_test: true,\n    test_scenario: \"urls\"\n  },\n  binary: {\n    // Mock binary attachments\n    attachment1: {\n      data: Buffer.from(\"%PDF-1.4 mock PDF content invoice...\"),\n      mimeType: \"application/pdf\",\n      fileName: \"test_invoice.pdf\"\n    },\n    attachment2: {\n      data: Buffer.from(\"%PDF-1.4 mock PDF content supplement...\"),\n      mimeType: \"application/pdf\", \n      fileName: \"test_supplement.pdf\"\n    }\n  }\n}];\n\n// TEST 2: Direct binary (like your actual flow)\n// return [{\n//   json: {\n//     invoice_filename: \"invoice_123.pdf\",\n//     supplement_filename: \"supplement_456.pdf\",\n//     // ... other metadata\n//   },\n//   binary: {\n//     invoice_attachment: {\n//       data: Buffer.from(\"real PDF binary would be here\"),\n//       mimeType: \"application/pdf\",\n//       fileName: \"invoice_123.pdf\"\n//     },\n//     supplement_attachment: {\n//       data: Buffer.from(\"real PDF binary would be here\"),\n//       mimeType: \"application/pdf\",\n//       fileName: \"supplement_456.pdf\"\n//     }\n//   }\n// }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        -16
+      ],
+      "id": "ac2919a3-a1e9-4f3a-94f8-a6f0c002dacf",
+      "name": "test data (for the last Merge subflow)"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconsole.log('🎯 DEBUG - Input to extract_binary_files:');\nconsole.log('JSON keys:', Object.keys(items[0].json));\nconsole.log('Binary keys:', Object.keys(items[0].binary || {}));\nconsole.log('invoice_filename:', items[0].json.invoice_filename);\nconsole.log('supplement_filename:', items[0].json.supplement_filename);\n\n// Check each binary file's filename\nif (items[0].binary) {\n  Object.entries(items[0].binary).forEach(([key, value]) => {\n    console.log(`Binary ${key}:`, value.fileName);\n  });\n}\n\nreturn items; // Pass through"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        16
+      ],
+      "id": "d0ea1082-2de3-4c44-a2cc-252ef95ee52d",
+      "name": "debug"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "igxrDFxDkonEYlPT",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/igxrDFxDkonEYlPT",
+          "cachedResultName": "PDF Merge (Base64)"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1456,
+        800
+      ],
+      "id": "7cf804ef-56d8-4db6-b1d7-64e5e2216ae7",
+      "name": "Call 'PDF Merge'1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "Update (Read, category) Rechnungen",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI - Prüfung Inhalt": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean E-Mail": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "E-Mail an rechnung@vorderegger.org": {
+      "main": [
+        [
+          {
+            "node": "Clean E-Mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update (Read, category) Rechnungen": {
+      "main": [
+        [
+          {
+            "node": "Get a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "XML detection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "insert row in \"Rechnungen\"",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "insert row in \"Rechnungen\"": {
+      "main": [
+        [
+          {
+            "node": "Casavi Access Token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "prüfender Buchhalter": {
+      "main": [
+        [
+          {
+            "node": "Parse the output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "prüfender Buchhalter",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Liegenschaften": {
+      "ai_tool": [
+        [
+          {
+            "node": "prüfender Buchhalter",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Unternehmen": {
+      "ai_tool": [
+        [
+          {
+            "node": "prüfender Buchhalter",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "prüfender Buchhalter",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Get message again",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get message again": {
+      "main": [
+        [
+          {
+            "node": "attachments",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "attachments_metadata",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge meta/pdf",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "attachments": {
+      "main": [
+        [
+          {
+            "node": "Split Out attachments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "attachments_metadata": {
+      "main": [
+        [
+          {
+            "node": "Split Out attachments1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out attachments": {
+      "main": [
+        [
+          {
+            "node": "merge attachments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out attachments1": {
+      "main": [
+        [
+          {
+            "node": "merge attachments",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "merge attachments": {
+      "main": [
+        [
+          {
+            "node": "p7m Files detection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a message": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Casavi Access Token": {
+      "main": [
+        [
+          {
+            "node": "Casavi token?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vertrags-/Zuordnungsregeln": {
+      "ai_tool": [
+        [
+          {
+            "node": "prüfender Buchhalter",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Kategorie \"Unternehmensbuchhaltung\"": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Move file to Unternehmen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get tickets": {
+      "ai_tool": [
+        [
+          {
+            "node": "prüfender Buchhalter",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge meta/pdf": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Kategorie \"RE Hausverwaltung\"",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Kategorie \"Unternehmensbuchhaltung\"",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Kategorie \"sonstiges Dokument\"",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Kategorie \"RE Hausverwaltung\"": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Move file to HV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Kategorie \"sonstiges Dokument\"": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "move to 'Posteingang erledigt'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file": {
+      "main": [
+        [
+          {
+            "node": "File exists?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "move to 'Posteingang erledigt'": {
+      "main": [
+        []
+      ]
+    },
+    "Move file to Unternehmen": {
+      "main": [
+        [
+          {
+            "node": "Zuweisung zu Unternehmen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zuweisung zu Unternehmen": {
+      "main": [
+        [
+          {
+            "node": "Move 200000 VZ Immo Invest GmbH",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "209600 das Salz GmbH",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "213033 VO Lehen Immobilien GmbH",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "220030 VO Verwaltung GmbH",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "220032 Vorderegger Developments GmbH",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "224012 Vorest Vermögensverwaltung GmbH",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "224014 Aupoint Liegenschaftsverwaltungs GmbH",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "224017 Fürstenbrunn Projekt GmbH",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "224019 VO & RMI Immobilien GmbH",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "224020 B1 Immobilien GmbH",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "224021 STROVORD GmbH",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "224022 VO Immo GmbH",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "224024 VORSA Developments GmbH",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "231062 Haidaways GmbH",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "231064 Ceroskopia Invest GmbH & Co KG",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "231065 LG 9 Projekt GmbH",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "231066 Wagrain Wohnen GmbH",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "231068 MMR GmbH",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "209615 VO Holding GmbH",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "224025 VO Baumanagement GmbH",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "230971 LFM Bau GmbH",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send text, keine Zuweisung zu Unternehmen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "only PDF/XML": {
+      "main": [
+        [
+          {
+            "node": "Merge meta/pdf",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual trigger (test)": {
+      "main": [
+        [
+          {
+            "node": "test data for merge subworkflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch3": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "🚨 CASAVI TICKET FAILED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse the output": {
+      "main": [
+        [
+          {
+            "node": "Switch3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Casavi token?": {
+      "main": [
+        [
+          {
+            "node": "prüfender Buchhalter",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "🔐 CASAVI AUTH FAILED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "File exists?": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "☁️ GOOGLE DRIVE UPLOAD FAILED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "XML detection": {
+      "main": [
+        [
+          {
+            "node": "has XML?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "has XML?": {
+      "main": [
+        [
+          {
+            "node": "XML Parser",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "has text?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "XML Parser": {
+      "main": [
+        [
+          {
+            "node": "insert row in \"Rechnungen\"",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "has text?": {
+      "main": [
+        [
+          {
+            "node": "🚨 PDF EXTRACTION FAILED",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "has p7m?": {
+      "main": [
+        [
+          {
+            "node": "🚨 P7M FILE DETECTED",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Invoice+Beilage detection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "p7m Files detection": {
+      "main": [
+        [
+          {
+            "node": "has p7m?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Invoice+Beilage detection": {
+      "main": [
+        [
+          {
+            "node": "needs_pdf_merging?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "needs_pdf_merging?": {
+      "main": [
+        [
+          {
+            "node": "extract_binary_files",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "only PDF/XML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "extract_binary_files": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "test data for merge subworkflow": {
+      "main": [
+        [
+          {
+            "node": "Call 'PDF Merge'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Call 'PDF Merge'1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "test data (for the last Merge subflow)": {
+      "main": [
+        []
+      ]
+    },
+    "debug": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "errorWorkflow": "0TMY1zYldIUpO5m0",
+    "timeSavedPerExecution": 1
+  },
+  "versionId": "0eeca1ad-627c-4013-8888-881380a8fc72",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a7f92fae8e9b87eb69c9a7cd1e8595d355e81c682209552022d56d24b2dc661a"
+  },
+  "id": "poC3W3PgryD7WEh4",
+  "tags": [
+    {
+      "updatedAt": "2025-10-16T15:02:53.858Z",
+      "createdAt": "2025-10-16T15:02:53.858Z",
+      "id": "XYLxcVJTWZslFX2D",
+      "name": "Dokumente"
+    },
+    {
+      "updatedAt": "2025-10-10T10:46:18.058Z",
+      "createdAt": "2025-10-10T10:46:18.058Z",
+      "id": "sAO5hYdNJi9oZdvC",
+      "name": "Mail"
+    }
+  ]
+}

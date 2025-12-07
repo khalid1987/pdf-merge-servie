@@ -1,0 +1,174 @@
+{
+  "name": "Test Stirling API Direct",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://ontheline.trincoll.edu/images/bookdown/sample-local-pdf.pdf",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "download1",
+      "name": "Download PDF 1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "file1",
+              "name": "file1",
+              "value": "={{ $binary.data }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "save1",
+      "name": "Save as file1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://ontheline.trincoll.edu/images/bookdown/sample-local-pdf.pdf",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "download2",
+      "name": "Download PDF 2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "file2",
+              "name": "file2",
+              "value": "={{ $binary.data }}",
+              "type": "object"
+            },
+            {
+              "id": "file1",
+              "name": "file1",
+              "value": "={{ $('Save as file1').item.json.file1 }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "combine",
+      "name": "Combine Both",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://95.216.205.234:8080/api/v1/general/merge-pdfs",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "fileInput",
+              "value": "={{ $json.file1 }}"
+            },
+            {
+              "name": "fileInput",
+              "value": "={{ $json.file2 }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "call-stirling",
+      "name": "Call Stirling",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1340, 300]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [[
+        {
+          "node": "Download PDF 1",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Download PDF 1": {
+      "main": [[
+        {
+          "node": "Save as file1",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Save as file1": {
+      "main": [[
+        {
+          "node": "Download PDF 2",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Download PDF 2": {
+      "main": [[
+        {
+          "node": "Combine Both",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Combine Both": {
+      "main": [[
+        {
+          "node": "Call Stirling",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

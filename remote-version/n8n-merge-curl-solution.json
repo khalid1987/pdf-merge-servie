@@ -1,0 +1,115 @@
+{
+  "name": "PDF Merge - Code Node Solution",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual",
+      "name": "When clicking 'Test workflow'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://ontheline.trincoll.edu/images/bookdown/sample-local-pdf.pdf",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "download1",
+      "name": "Download Test PDF 1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 240]
+    },
+    {
+      "parameters": {
+        "url": "https://ontheline.trincoll.edu/images/bookdown/sample-local-pdf.pdf",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "download2",
+      "name": "Download Test PDF 2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 360]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "mergeByPosition",
+        "options": {}
+      },
+      "id": "merge",
+      "name": "Merge PDFs",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const fs = require('fs');\nconst { exec } = require('child_process');\nconst { promisify } = require('util');\nconst execAsync = promisify(exec);\n\n// Get all items (should have 1 item with multiple binary properties)\nconst items = $input.all();\n\nif (items.length === 0) {\n  throw new Error('No items received');\n}\n\n// Get binary data from both PDFs\nconst item = items[0];\nconst binaryKeys = Object.keys(item.binary);\n\nif (binaryKeys.length < 2) {\n  throw new Error(`Expected at least 2 PDFs, got ${binaryKeys.length}`);\n}\n\n// Write PDFs to temp files\nconst tmpDir = '/tmp';\nconst pdf1Path = `${tmpDir}/merge_pdf1_${Date.now()}.pdf`;\nconst pdf2Path = `${tmpDir}/merge_pdf2_${Date.now()}.pdf`;\nconst outputPath = `${tmpDir}/merged_${Date.now()}.pdf`;\n\n// Get the binary data\nconst pdf1Binary = item.binary[binaryKeys[0]];\nconst pdf2Binary = item.binary[binaryKeys[1]];\n\n// Write files\nfs.writeFileSync(pdf1Path, Buffer.from(pdf1Binary.data, 'base64'));\nfs.writeFileSync(pdf2Path, Buffer.from(pdf2Binary.data, 'base64'));\n\ntry {\n  // Call Stirling PDF via curl\n  const curlCmd = `curl -X POST \"http://95.216.205.234:8080/api/v1/general/merge-pdfs\" \\\n    -F \"fileInput=@${pdf1Path}\" \\\n    -F \"fileInput=@${pdf2Path}\" \\\n    -o \"${outputPath}\"`;\n  \n  await execAsync(curlCmd);\n  \n  // Read the merged PDF\n  const mergedPdf = fs.readFileSync(outputPath);\n  \n  // Clean up temp files\n  fs.unlinkSync(pdf1Path);\n  fs.unlinkSync(pdf2Path);\n  fs.unlinkSync(outputPath);\n  \n  // Return as binary\n  return {\n    json: {\n      success: true,\n      originalFiles: binaryKeys.length,\n      mergedSize: mergedPdf.length\n    },\n    binary: {\n      data: {\n        data: mergedPdf.toString('base64'),\n        mimeType: 'application/pdf',\n        fileName: 'merged.pdf'\n      }\n    }\n  };\n  \n} catch (error) {\n  // Clean up on error\n  try { fs.unlinkSync(pdf1Path); } catch {}\n  try { fs.unlinkSync(pdf2Path); } catch {}\n  try { fs.unlinkSync(outputPath); } catch {}\n  \n  throw new Error(`Merge failed: ${error.message}`);\n}"
+      },
+      "id": "merge-code",
+      "name": "Merge via Curl",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 300]
+    }
+  ],
+  "connections": {
+    "When clicking 'Test workflow'": {
+      "main": [[
+        {
+          "node": "Download Test PDF 1",
+          "type": "main",
+          "index": 0
+        },
+        {
+          "node": "Download Test PDF 2",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Download Test PDF 1": {
+      "main": [[
+        {
+          "node": "Merge PDFs",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    },
+    "Download Test PDF 2": {
+      "main": [[
+        {
+          "node": "Merge PDFs",
+          "type": "main",
+          "index": 1
+        }
+      ]]
+    },
+    "Merge PDFs": {
+      "main": [[
+        {
+          "node": "Merge via Curl",
+          "type": "main",
+          "index": 0
+        }
+      ]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
